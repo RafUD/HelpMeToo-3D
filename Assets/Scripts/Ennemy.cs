@@ -1,27 +1,28 @@
 using UnityEngine;
-using static UnityEngine.GraphicsBuffer;
 
-public class Ennemy : MonoBehaviour
+public class Enemy : MonoBehaviour
 {
-
-    public Transform target; 
-    public float within_range;
+    public Transform target;
     public float speed;
+    public float within_range;
 
-
-    public void Update()
+    void Update()
     {
-        //distance between the target and (this object)
         float dist = Vector3.Distance(target.position, transform.position);
-        //within the range?
+
         if (dist <= within_range)
         {
-            //move to target
-            transform.position = Vector3.MoveTowards(transform.position, target.transform.position, speed);
+            Vector3 targetPos = new Vector3(
+                target.position.x,
+                transform.position.y,
+                target.position.z
+            );
+
+            transform.position = Vector3.MoveTowards(
+                transform.position,
+                targetPos,
+                speed * Time.deltaTime
+            );
         }
-        //else, if it is not in rage, it will not follow
     }
 }
-
-
-
