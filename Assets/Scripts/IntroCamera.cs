@@ -4,6 +4,7 @@ using UnityEngine;
 public class IntroCamera : MonoBehaviour
 {
     public float delayInSeconds = 5f; // Set the delay duration in the Inspector
+    public GameObject followPlayerCam;
 
     void Start()
     {
@@ -18,5 +19,8 @@ public class IntroCamera : MonoBehaviour
 
         // Deactivate the GameObject this script is attached to
         gameObject.SetActive(false);
+
+        followPlayerCam.SetActive(true);
     }
+
 }
