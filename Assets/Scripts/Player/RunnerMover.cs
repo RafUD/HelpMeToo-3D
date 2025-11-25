@@ -10,6 +10,8 @@ public class RunnerMover : MonoBehaviour
     public float runSpeed = 10f;
     public float strafeSpeed = 7f;
     public float lateralLimit = 3f;
+    public float turnSpeed = 10f;
+    public float tiltAngle = 5f; // yaw visuel max en degrés quand on strafe
 
     [Header("Jump")]
     public float jumpHeight = 1.5f;
@@ -22,6 +24,8 @@ public class RunnerMover : MonoBehaviour
     float coyoteTimer;
     float lateralOffset;
     Vector3 startPosition;
+    Vector3 baseForward;
+    Vector3 baseRight;
 
     void Awake()
     {
@@ -29,13 +33,15 @@ public class RunnerMover : MonoBehaviour
         anim = GetComponent<animationStateController>();
         startPosition = transform.position;
         lateralOffset = 0f;
+        baseForward = transform.forward;
+        baseRight = transform.right;
     }
 
     void Update()
     {
         if (anim != null && anim.IsDead)
         {
-            verticalVelocity = 0f;
+            verticalVelocity = 0f; // mort : on ne bouge plus
             return;
         }
 
@@ -43,7 +49,7 @@ public class RunnerMover : MonoBehaviour
         if (grounded)
         {
             coyoteTimer = groundedGraceTime;
-            if (verticalVelocity < 0f) verticalVelocity = -2f; // keep stuck to ground
+            if (verticalVelocity < 0f) verticalVelocity = -2f; // garde le perso collé au sol
         }
         else
         {
@@ -66,7 +72,7 @@ public class RunnerMover : MonoBehaviour
             bool startedJump = anim == null || anim.TryStartJump();
             if (startedJump)
             {
-                verticalVelocity = Mathf.Sqrt(jumpHeight * -2f * gravity);
+                verticalVelocity = Mathf.Sqrt(jumpHeight * -2f * gravity); // impulsion vers le haut
                 coyoteTimer = 0f;
             }
         }
@@ -85,7 +91,17 @@ public class RunnerMover : MonoBehaviour
             lateralDeltaPerSec = (Mathf.Abs(lateralDelta) > Mathf.Epsilon) ? (lateralDelta / Time.deltaTime) : 0f;
         }
 
-        Vector3 move = (transform.forward * forwardSpeed) + (transform.right * lateralDeltaPerSec);
+        Vector3 move = (baseForward * forwardSpeed) + (baseRight * lateralDeltaPerSec);
+
+        // Rotation légère pour donner l'impression de pencher vers la gauche/droite sans dévier la trajectoire
+        float targetYaw = 0f;
+        if (canMove)
+        {
+            targetYaw = Mathf.Clamp(horizontal, -1f, 1f) * tiltAngle;
+        }
+        Quaternion targetRot = Quaternion.AngleAxis(targetYaw, Vector3.up) * Quaternion.LookRotation(baseForward, Vector3.up);
+        transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, turnSpeed * Time.deltaTime);
+
         controller.Move(move * Time.deltaTime);
         lateralOffset = targetLateralOffset;
 

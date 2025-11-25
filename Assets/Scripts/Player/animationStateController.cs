@@ -51,7 +51,7 @@ public class animationStateController : MonoBehaviour
             var keyboard = Keyboard.current;
             if (keyboard != null && keyboard.anyKey.wasPressedThisFrame)
             {
-                BeginWalkingPhase();
+                BeginWalkingPhase(); // première entrée utilisateur : on lance la phase de marche
             }
         }
         else if (!hasStartedRunning)
@@ -59,7 +59,7 @@ public class animationStateController : MonoBehaviour
             walkTimer -= Time.deltaTime;
             if (walkTimer <= 0f)
             {
-                StartRunning();
+                StartRunning(); // après la marche, on passe en course
             }
         }
 
@@ -69,7 +69,7 @@ public class animationStateController : MonoBehaviour
             if (jumpTimer <= 0f)
             {
                 isJumping = false;
-                StartRunning();
+                StartRunning(); // retour automatique à la course après le saut
             }
         }
     }
@@ -108,7 +108,7 @@ public class animationStateController : MonoBehaviour
     {
         hasStartedRunning = true;
         isWalking = false;
-        PlayState(runningHash);
+        PlayState(runningHash); // déclenche l'anim de course
     }
 
     void StartJump()
@@ -117,13 +117,13 @@ public class animationStateController : MonoBehaviour
         hasStartedRunning = true;
         isWalking = false;
         jumpTimer = jumpReturnDelay;
-        PlayState(jumpHash);
+        PlayState(jumpHash); // déclenche l'anim de saut
     }
 
     void HandleDeath()
     {
         isDead = true;
-        PlayState(deathHash);
+        PlayState(deathHash); // déclenche l'anim de mort
     }
 
     void PlayState(int stateHash)
