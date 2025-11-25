@@ -3,7 +3,7 @@ using UnityEngine;
 public class LevelBoundary : MonoBehaviour
 {
     public static float leftSide = -80f;
-    public static float rightSide = -75f;
+    public static float rightSide = -72.6f;
     public float internalLeftSide;
     public float internalRightSide;
 
