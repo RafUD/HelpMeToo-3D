@@ -9,9 +9,8 @@ public class RunnerMover : MonoBehaviour
     public float walkSpeed = 2f;
     public float runSpeed = 10f;
     public float strafeSpeed = 7f;
-    public float lateralLimit = 3f;
     public float turnSpeed = 10f;
-    public float tiltAngle = 5f; // yaw visuel max en degrés quand on strafe
+    public float tiltAngle = 5f; // yaw visuel max en degres quand on strafe
 
     [Header("Jump")]
     public float jumpHeight = 1.5f;
@@ -22,19 +21,13 @@ public class RunnerMover : MonoBehaviour
     animationStateController anim;
     float verticalVelocity;
     float coyoteTimer;
-    float lateralOffset;
-    Vector3 startPosition;
     Vector3 baseForward;
-    Vector3 baseRight;
 
     void Awake()
     {
         controller = GetComponent<CharacterController>();
         anim = GetComponent<animationStateController>();
-        startPosition = transform.position;
-        lateralOffset = 0f;
-        baseForward = transform.forward;
-        baseRight = transform.right;
+        baseForward = transform.forward.normalized;
     }
 
     void Update()
@@ -49,7 +42,7 @@ public class RunnerMover : MonoBehaviour
         if (grounded)
         {
             coyoteTimer = groundedGraceTime;
-            if (verticalVelocity < 0f) verticalVelocity = -2f; // garde le perso collé au sol
+            if (verticalVelocity < 0f) verticalVelocity = -2f; // garde le perso colle au sol
         }
         else
         {
@@ -82,18 +75,20 @@ public class RunnerMover : MonoBehaviour
         {
             forwardSpeed = (anim != null && anim.HasStartedRunning) ? runSpeed : walkSpeed;
         }
-        float targetLateralOffset = lateralOffset;
+
+        // Limite gauche/droite basee sur LevelBoundary (axes Z)
+        float targetZ = transform.position.z;
         float lateralDeltaPerSec = 0f;
         if (canMove)
         {
-            targetLateralOffset = Mathf.Clamp(lateralOffset + horizontal * strafeSpeed * Time.deltaTime, -lateralLimit, lateralLimit);
-            float lateralDelta = targetLateralOffset - lateralOffset;
+            targetZ = Mathf.Clamp(transform.position.z + horizontal * strafeSpeed * Time.deltaTime, LevelBoundary.leftSide, LevelBoundary.rightSide);
+            float lateralDelta = targetZ - transform.position.z;
             lateralDeltaPerSec = (Mathf.Abs(lateralDelta) > Mathf.Epsilon) ? (lateralDelta / Time.deltaTime) : 0f;
         }
 
-        Vector3 move = (baseForward * forwardSpeed) + (baseRight * lateralDeltaPerSec);
+        Vector3 move = (baseForward * forwardSpeed) + new Vector3(0f, 0f, lateralDeltaPerSec);
 
-        // Rotation légère pour donner l'impression de pencher vers la gauche/droite sans dévier la trajectoire
+        // Rotation legere pour donner l'impression de pencher vers la gauche/droite sans devier la trajectoire
         float targetYaw = 0f;
         if (canMove)
         {
@@ -103,7 +98,6 @@ public class RunnerMover : MonoBehaviour
         transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, turnSpeed * Time.deltaTime);
 
         controller.Move(move * Time.deltaTime);
-        lateralOffset = targetLateralOffset;
 
         verticalVelocity += gravity * Time.deltaTime;
         controller.Move(new Vector3(0f, verticalVelocity, 0f) * Time.deltaTime);
