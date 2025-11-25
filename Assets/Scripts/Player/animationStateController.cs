@@ -24,6 +24,9 @@ public class animationStateController : MonoBehaviour
     bool isJumping;
     bool isDead;
 
+    bool isVictorious;
+    public bool IsVictorious => isVictorious;
+
     public bool IsDead => isDead;
     public bool HasInputStarted => hasInputStarted;
     public bool IsWalking => isWalking;
@@ -35,6 +38,8 @@ public class animationStateController : MonoBehaviour
     readonly int runningHash = Animator.StringToHash("Running");
     readonly int jumpHash = Animator.StringToHash("Jump");
     readonly int deathHash = Animator.StringToHash("Death");
+    readonly int victoryHash = Animator.StringToHash("Victory");
+
 
     void Start()
     {
@@ -44,7 +49,7 @@ public class animationStateController : MonoBehaviour
 
     void Update()
     {
-        if (isDead) return;
+        if (isDead || isVictorious) return;
 
         if (!hasInputStarted)
         {
@@ -126,8 +131,29 @@ public class animationStateController : MonoBehaviour
         PlayState(deathHash); // déclenche l'anim de mort
     }
 
+
+    public void TriggerVictory()
+    {
+        if (isDead || isJumping) return;
+        HandleVictory();
+    }
+
+    void HandleVictory()
+    {
+        isVictorious = true;  
+        PlayState(victoryHash);
+        hasStartedRunning = false;
+        isWalking = false;
+        isJumping = false;
+    }
+
+
+
+
     void PlayState(int stateHash)
     {
+        Debug.Log("Playing state: " + stateHash); 
+
         if (animator == null) return;
 
         if (animator.HasState(0, stateHash))
@@ -139,6 +165,7 @@ public class animationStateController : MonoBehaviour
             animator.CrossFadeInFixedTime(idleHash, stateCrossFade);
         }
     }
+
 
     void BeginWalkingPhase()
     {
