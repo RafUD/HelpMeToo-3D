@@ -25,11 +25,17 @@ namespace GameDevTraum
                 public GameObject destroyedGlassParent;
 
 
+
+
                 private void OnTriggerEnter(Collider other)
                 {
-                    destroyedGlassParent.SetActive(true);
-                    normalGlass.SetActive(false);
-                    audioManager.PlaySFX(audioManager.mirrorBreak);
+                    if (other.CompareTag("Player"))
+                    {
+                        destroyedGlassParent.SetActive(true);
+                        normalGlass.SetActive(false);
+                        audioManager.PlaySFX(audioManager.mirrorBreak);
+                    }
+                        
                 }
 
             }
