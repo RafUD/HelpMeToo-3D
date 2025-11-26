@@ -12,30 +12,16 @@ namespace GameDevTraum
             public class GDT_BreakGlassScript : MonoBehaviour
             {
 
-                AudioManager audioManager;
-
-                private void Awake()
-                {
-                    audioManager = GameObject.FindGameObjectWithTag("Audio").GetComponent<AudioManager>();
-
-                }
-
-
                 public GameObject normalGlass;
                 public GameObject destroyedGlassParent;
-
-
-
+                public AudioSource audioSource;
+                public AudioClip audioClip;
 
                 private void OnTriggerEnter(Collider other)
                 {
-                    if (other.CompareTag("Player"))
-                    {
-                        destroyedGlassParent.SetActive(true);
-                        normalGlass.SetActive(false);
-                        audioManager.PlaySFX(audioManager.mirrorBreak);
-                    }
-                        
+                    destroyedGlassParent.SetActive(true);
+                    normalGlass.SetActive(false);
+                    audioSource.PlayOneShot(audioClip);
                 }
 
             }
