@@ -1,9 +1,11 @@
 ﻿using UnityEngine;
 
+[RequireComponent(typeof(Rigidbody))]
+[RequireComponent(typeof(Animator))]
 public class Enemy : MonoBehaviour
 {
-    
-    public Transform target;
+    [Header("References")]
+    public Transform target; // Player
 
     [Header("Chase Settings")]
     public float detectionRange = 10f;
@@ -13,53 +15,50 @@ public class Enemy : MonoBehaviour
     public Transform pointA;
     public Transform pointB;
     public float patrolSpeed = 3f;
-    public float patrolWaitTime = 1f; // pause à chaque point
-
+    public float patrolWaitTime = 1f;
 
     private Rigidbody rb;
-    private Renderer enemyRenderer;
+    private Animator animator;
+
     private Transform currentPatrolTarget;
     private bool isChasing;
-    private float patrolWaitTimer;
     private bool isWaiting;
+    private float patrolWaitTimer;
+    private bool isPatrolling;
+
+    // Track current animation
+    private int currentAnimHash = -1;
+
+    // Animator hashes
+    private readonly int walkHash = Animator.StringToHash("Old Man Walk");
+    private readonly int runHash = Animator.StringToHash("Running");
+    private readonly int attackHash = Animator.StringToHash("Attack");
 
     void Start()
     {
         rb = GetComponent<Rigidbody>();
-        enemyRenderer = GetComponent<Renderer>();
+        animator = GetComponent<Animator>();
 
-        // Start patrolling toward point A
         currentPatrolTarget = pointA;
-    }
+        isPatrolling = false;
 
+        PlayAnimation(walkHash); // Start patrol animation
+    }
 
     void FixedUpdate()
     {
-        // Check if game is frozen (player died or won)
-        if (LevelManager.GlobalFreeze)
-        {
-            rb.linearVelocity = Vector3.zero; 
-            return;
-        }
+        if (LevelManager.GlobalFreeze) return;
 
-        // Check distance to player
         float distanceToPlayer = Vector3.Distance(target.position, transform.position);
 
-        // Check behavior based on distance
         if (distanceToPlayer <= detectionRange)
         {
-            if (!isChasing)
-            {
-                EnterChaseMode();
-            }
+            if (!isChasing) EnterChaseMode();
             ChasePlayer();
         }
         else
         {
-            if (isChasing)
-            {
-                ExitChaseMode();
-            }
+            if (isChasing) ExitChaseMode();
             Patrol();
         }
     }
@@ -68,55 +67,48 @@ public class Enemy : MonoBehaviour
     {
         isChasing = true;
         isWaiting = false;
-
+        isPatrolling = false;
+        PlayAnimation(runHash);
     }
 
     void ExitChaseMode()
     {
         isChasing = false;
-
-
+        isPatrolling = false;
+        PlayAnimation(walkHash);
     }
 
     void Patrol()
     {
-        // If waiting at a patrol point
+        if (!isPatrolling)
+        {
+            PlayAnimation(walkHash);
+            isPatrolling = true;
+        }
+
         if (isWaiting)
         {
             patrolWaitTimer -= Time.fixedDeltaTime;
-            if (patrolWaitTimer <= 0)
+            if (patrolWaitTimer <= 0f)
             {
                 isWaiting = false;
-                // Switch to the other patrol point
                 currentPatrolTarget = (currentPatrolTarget == pointA) ? pointB : pointA;
             }
             return;
         }
 
-        // Move toward current patrol target (keep same Y position)
-        Vector3 targetPos = new Vector3(
-            currentPatrolTarget.position.x,
-            transform.position.y,
-            currentPatrolTarget.position.z
-        );
-
-        // Look at target
+        Vector3 targetPos = new Vector3(currentPatrolTarget.position.x, transform.position.y, currentPatrolTarget.position.z);
         Vector3 direction = (targetPos - transform.position).normalized;
+
         if (direction != Vector3.zero)
         {
             Quaternion lookRotation = Quaternion.LookRotation(direction);
             transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.fixedDeltaTime * 5f);
         }
 
-        // Move toward target
-        Vector3 newPos = Vector3.MoveTowards(
-            transform.position,
-            targetPos,
-            patrolSpeed * Time.fixedDeltaTime
-        );
+        Vector3 newPos = Vector3.MoveTowards(transform.position, targetPos, patrolSpeed * Time.fixedDeltaTime);
         rb.MovePosition(newPos);
 
-        // Check if reached patrol point
         if (Vector3.Distance(transform.position, targetPos) < 0.3f)
         {
             isWaiting = true;
@@ -126,27 +118,18 @@ public class Enemy : MonoBehaviour
 
     void ChasePlayer()
     {
-        //Keep same Y position
-        Vector3 targetPos = new Vector3(
-            target.position.x,
-            transform.position.y,
-            target.position.z
-        );
+        PlayAnimation(runHash);
 
-        // Look at player
+        Vector3 targetPos = new Vector3(target.position.x, transform.position.y, target.position.z);
         Vector3 direction = (targetPos - transform.position).normalized;
+
         if (direction != Vector3.zero)
         {
             Quaternion lookRotation = Quaternion.LookRotation(direction);
             transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.fixedDeltaTime * 8f);
         }
 
-        // Chase target
-        Vector3 newPos = Vector3.MoveTowards(
-            transform.position,
-            targetPos,
-            chaseSpeed * Time.fixedDeltaTime
-        );
+        Vector3 newPos = Vector3.MoveTowards(transform.position, targetPos, chaseSpeed * Time.fixedDeltaTime);
         rb.MovePosition(newPos);
     }
 
@@ -154,29 +137,43 @@ public class Enemy : MonoBehaviour
     {
         if (other.CompareTag("Player") && !LevelManager.GlobalFreeze)
         {
-            // Kill player
-            var anim = other.GetComponent<animationStateController>();
-            if (anim != null)
-                anim.TakeDamage(999);
+            PlayAnimation(attackHash);
 
-            // Tout s'arrête
+            var anim = other.GetComponent<AutoRunnerAnimation>();
+            if (anim != null) anim.TakeDamage(999);
+
             LevelManager.GlobalFreeze = true;
-
-            // Notifier level manager
             LevelManager levelManager = FindFirstObjectByType<LevelManager>();
-            if (levelManager != null)
-                levelManager.PlayerDied();
+            if (levelManager != null) levelManager.PlayerDied();
         }
     }
 
-    // Visualisser les zones
+    private void PlayAnimation(int hash)
+    {
+        if (animator == null) return;
+
+        if (currentAnimHash == hash) return;
+
+        if (animator.HasState(0, hash))
+        {
+            // Play first frame immediately, then crossfade
+            animator.Play(hash, 0, 0f);
+            animator.CrossFadeInFixedTime(hash, 0.2f);
+            currentAnimHash = hash;
+        }
+        else
+        {
+            Debug.LogWarning($"[Enemy] Animator state not found! Hash: {hash}");
+        }
+    }
+
     private void OnDrawGizmosSelected()
     {
         // Detection range
         Gizmos.color = Color.yellow;
         Gizmos.DrawWireSphere(transform.position, detectionRange);
 
-        // Patrol
+        // Patrol points
         if (pointA != null && pointB != null)
         {
             Gizmos.color = Color.green;

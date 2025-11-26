@@ -15,6 +15,8 @@ public class ItemsManager : MonoBehaviour
 
     void Awake()
     {
+        ResetCoins();
+
         // Reset on scene load
         CurrentStage = SpeedStage.Walking;
     }

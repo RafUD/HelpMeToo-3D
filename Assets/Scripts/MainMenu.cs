@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -5,6 +6,8 @@ using UnityEngine.SceneManagement;
 
 public class MainMenu : MonoBehaviour
 {
+    [SerializeField] GameObject fadeOut;
+
     void Start()
     {
         
@@ -18,8 +21,15 @@ public class MainMenu : MonoBehaviour
 
     public void StartGame()
     {
-        SceneManager.LoadScene("Niveau");
+        StartCoroutine(StartButton());
     }
 
 
+    IEnumerator StartButton()
+    {
+        fadeOut.SetActive(true);
+        yield return new WaitForSeconds(1);
+        SceneManager.LoadScene("Niveau");
+
+    }
 }

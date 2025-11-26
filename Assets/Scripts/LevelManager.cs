@@ -1,10 +1,10 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class LevelManager : MonoBehaviour
 {
-    public animationStateController animController;
-    public RunnerMover playerMover;
+    public AutoRunnerAnimation animController;
+    public AutoRunner playerMover;
     public AudioManager audioManager;
 
     public float victoryDelay = 2f;
@@ -24,31 +24,36 @@ public class LevelManager : MonoBehaviour
 
 
         if (animController == null)
-            animController = FindFirstObjectByType<animationStateController>();
+            animController = FindFirstObjectByType<AutoRunnerAnimation>();
 
         if (playerMover == null)
-            playerMover = FindFirstObjectByType<RunnerMover>();
+            playerMover = FindFirstObjectByType<AutoRunner>(); 
 
         if (audioManager == null)
             audioManager = FindFirstObjectByType<AudioManager>();
     }
 
-  
+
     //      PLAYER WINS
     public void WinLevel()
     {
-
-        GlobalFreeze = true;
-
-
         if (levelEnded) return;
         levelEnded = true;
 
-        animController.TriggerVictory();
-        audioManager.PlaySFX(audioManager.victory);
+        GlobalFreeze = true;
 
-        // Disable movement
-        playerMover.enabled = false;
+        if (animController != null)  // ← Add this
+            animController.TriggerVictory();
+
+        if (audioManager != null)    // ← Add this
+            audioManager.PlaySFX(audioManager.victory);
+
+        if (playerMover != null)     // ← Add this
+            playerMover.enabled = false;
+
+
+        ItemsManager.coinsCollected = 0;
+
 
         Invoke(nameof(LoadNextLevel), victoryDelay);
     }
@@ -56,14 +61,20 @@ public class LevelManager : MonoBehaviour
     //      PLAYER LOSES
     public void PlayerDied()
     {
-        GlobalFreeze = true;
-
-
         if (levelEnded) return;
         levelEnded = true;
 
-        audioManager.PlaySFX(audioManager.death);
-        playerMover.enabled = false;
+        GlobalFreeze = true;
+
+        if (audioManager != null)  // ← Null check here
+            audioManager.PlaySFX(audioManager.death);
+
+        if (playerMover != null)   // ← Null check here
+            playerMover.enabled = false;
+
+
+        ItemsManager.coinsCollected = 0;
+
 
         Invoke(nameof(RestartLevel), deathDelay);
     }
