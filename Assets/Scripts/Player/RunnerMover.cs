@@ -5,16 +5,17 @@ using UnityEngine.InputSystem;
 [RequireComponent(typeof(animationStateController))]
 public class RunnerMover : MonoBehaviour
 {
-    [Header("Movement")]
-    public float walkSpeed = 2f;
-    public float runSpeed = 10f;
+    [Header("Movement Speeds")]
+    public float walkSpeed = 5f;
+    public float jogSpeed = 10f;
+    public float runSpeed = 15f;
     public float strafeSpeed = 7f;
     public float turnSpeed = 10f;
-    public float tiltAngle = 5f; // yaw visuel max en degres quand on strafe
+    public float tiltAngle = 5f;
 
     [Header("Jump")]
-    public float jumpHeight = 1.5f;
-    public float gravity = -25f;
+    public float jumpHeight = 2f;
+    public float gravity = -50f;
     public float groundedGraceTime = 0.1f;
 
     CharacterController controller;
@@ -32,21 +33,10 @@ public class RunnerMover : MonoBehaviour
 
     void Update()
     {
-        if (anim != null && anim.IsDead)
+        if (anim != null && (anim.IsDead || anim.IsVictorious))
         {
-            verticalVelocity = 0f; // mort : on ne bouge plus
+            verticalVelocity = 0f;
             return;
-        }
-
-        bool grounded = controller.isGrounded;
-        if (grounded)
-        {
-            coyoteTimer = groundedGraceTime;
-            if (verticalVelocity < 0f) verticalVelocity = -2f; // garde le perso colle au sol
-        }
-        else
-        {
-            coyoteTimer -= Time.deltaTime;
         }
 
         var keyboard = Keyboard.current;
@@ -60,46 +50,65 @@ public class RunnerMover : MonoBehaviour
 
         bool canMove = anim == null || anim.HasInputStarted;
 
-        if (jumpPressed && coyoteTimer > 0f && canMove)
+        // Handle jump input FIRST
+        if (jumpPressed && controller.isGrounded && canMove)
         {
             bool startedJump = anim == null || anim.TryStartJump();
             if (startedJump)
             {
-                verticalVelocity = Mathf.Sqrt(jumpHeight * -2f * gravity); // impulsion vers le haut
-                coyoteTimer = 0f;
+                verticalVelocity = Mathf.Sqrt(jumpHeight * -2f * gravity);
+                Debug.Log("JUMP! Velocity: " + verticalVelocity);
             }
         }
 
-        float forwardSpeed = 0f;
-        if (canMove)
+        // Apply gravity
+        verticalVelocity += gravity * Time.deltaTime;
+
+        // Apply downward force when grounded
+        if (controller.isGrounded && verticalVelocity < 0f)
         {
-            forwardSpeed = (anim != null && anim.HasStartedRunning) ? runSpeed : walkSpeed;
+            verticalVelocity = -2f;
         }
 
-        // Limite gauche/droite basee sur LevelBoundary (axes Z)
+        Debug.Log($"Grounded: {controller.isGrounded} | Velocity: {verticalVelocity:F2} | Y: {transform.position.y:F2}");
+
+        // Horizontal movement
+        float forwardSpeed = canMove ? GetCurrentSpeed() : 0f;
+
         float targetZ = transform.position.z;
         float lateralDeltaPerSec = 0f;
         if (canMove)
         {
-            targetZ = Mathf.Clamp(transform.position.z + horizontal * strafeSpeed * Time.deltaTime, LevelBoundary.leftSide, LevelBoundary.rightSide);
+            targetZ = Mathf.Clamp(transform.position.z + horizontal * strafeSpeed * Time.deltaTime,
+                                  LevelBoundary.leftSide, LevelBoundary.rightSide);
             float lateralDelta = targetZ - transform.position.z;
             lateralDeltaPerSec = (Mathf.Abs(lateralDelta) > Mathf.Epsilon) ? (lateralDelta / Time.deltaTime) : 0f;
         }
 
-        Vector3 move = (baseForward * forwardSpeed) + new Vector3(0f, 0f, lateralDeltaPerSec);
-
-        // Rotation legere pour donner l'impression de pencher vers la gauche/droite sans devier la trajectoire
-        float targetYaw = 0f;
-        if (canMove)
-        {
-            targetYaw = Mathf.Clamp(horizontal, -1f, 1f) * tiltAngle;
-        }
+        // Rotation
+        float targetYaw = canMove ? Mathf.Clamp(horizontal, -1f, 1f) * tiltAngle : 0f;
         Quaternion targetRot = Quaternion.AngleAxis(targetYaw, Vector3.up) * Quaternion.LookRotation(baseForward, Vector3.up);
         transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, turnSpeed * Time.deltaTime);
 
-        controller.Move(move * Time.deltaTime);
+        // MOVE: Combine horizontal + vertical in ONE move
+        Vector3 moveVector = (baseForward * forwardSpeed + new Vector3(0f, 0f, lateralDeltaPerSec)) * Time.deltaTime;
+        moveVector.y = verticalVelocity * Time.deltaTime;
 
-        verticalVelocity += gravity * Time.deltaTime;
-        controller.Move(new Vector3(0f, verticalVelocity, 0f) * Time.deltaTime);
+        controller.Move(moveVector);
+    }
+
+    float GetCurrentSpeed()
+    {
+        switch (ItemsManager.CurrentStage)
+        {
+            case ItemsManager.SpeedStage.Walking:
+                return walkSpeed;
+            case ItemsManager.SpeedStage.Jogging:
+                return jogSpeed;
+            case ItemsManager.SpeedStage.Running:
+                return runSpeed;
+            default:
+                return walkSpeed;
+        }
     }
 }

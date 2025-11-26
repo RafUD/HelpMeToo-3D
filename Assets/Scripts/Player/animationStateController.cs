@@ -1,3 +1,214 @@
+//using UnityEngine;
+//using UnityEngine.InputSystem;
+
+//[RequireComponent(typeof(Animator))]
+//public class animationStateController : MonoBehaviour
+//{
+//    [Header("Auto Run")]
+//    public float walkLeadSeconds = 1f;
+//    public float stateCrossFade = 0.1f;
+
+//    [Header("Jump")]
+//    public float jumpReturnDelay = 0.8f;
+
+//    [Header("Health")]
+//    public int maxHealth = 3;
+
+//    Animator animator;
+//    int currentHealth;
+//    float walkTimer;
+//    float jumpTimer;
+//    bool hasInputStarted;
+//    bool hasStartedRunning;
+//    bool isWalking;
+//    bool isJumping;
+//    bool isDead;
+//    bool isVictorious;
+
+//    public bool IsVictorious => isVictorious;
+//    public bool IsDead => isDead;
+//    public bool HasInputStarted => hasInputStarted;
+//    public bool IsWalking => isWalking;
+//    public bool HasStartedRunning => hasStartedRunning;
+//    public bool IsJumping => isJumping;
+
+//    readonly int idleHash = Animator.StringToHash("Idle");
+//    readonly int walkingHash = Animator.StringToHash("Walking");
+//    readonly int joggingHash = Animator.StringToHash("Jog Forward");
+//    readonly int runningHash = Animator.StringToHash("Running");
+//    readonly int jumpHash = Animator.StringToHash("Jump");
+//    readonly int deathHash = Animator.StringToHash("Death");
+//    readonly int victoryHash = Animator.StringToHash("Victory");
+
+//    private ItemsManager.SpeedStage lastStage = ItemsManager.SpeedStage.Walking;
+
+//    void Start()
+//    {
+//        animator = GetComponent<Animator>();
+//        ResetRun();
+//    }
+
+//    void Update()
+//    {
+//        if (isDead || isVictorious) return;
+
+//        if (!hasInputStarted)
+//        {
+//            var keyboard = Keyboard.current;
+//            if (keyboard != null && keyboard.anyKey.wasPressedThisFrame)
+//            {
+//                BeginWalkingPhase();
+//            }
+//        }
+//        else if (!hasStartedRunning)
+//        {
+//            walkTimer -= Time.deltaTime;
+//            if (walkTimer <= 0f)
+//            {
+//                StartRunning();
+//            }
+//        }
+
+//        // Update animation based on speed stage (only when running/moving)
+//        if (hasStartedRunning && !isJumping)
+//        {
+//            UpdateMovementAnimation();
+//        }
+
+//        if (isJumping)
+//        {
+//            jumpTimer -= Time.deltaTime;
+//            if (jumpTimer <= 0f)
+//            {
+//                isJumping = false;
+//                StartRunning();
+
+//                // FORCE animation update immediately
+//                UpdateMovementAnimation();
+//            }
+//        }
+
+//    }
+
+//    void UpdateMovementAnimation()
+//    {
+//        ItemsManager.SpeedStage currentStage = ItemsManager.CurrentStage;
+
+//        // Only change animation if stage changed
+//        if (currentStage != lastStage)
+//        {
+//            lastStage = currentStage;
+
+//            switch (currentStage)
+//            {
+//                case ItemsManager.SpeedStage.Walking:
+//                    PlayState(walkingHash);
+//                    break;
+//                case ItemsManager.SpeedStage.Jogging:
+//                    PlayState(joggingHash);
+//                    break;
+//                case ItemsManager.SpeedStage.Running:
+//                    PlayState(runningHash);
+//                    break;
+//            }
+//        }
+//    }
+
+//    public void ResetRun()
+//    {
+//        isDead = false;
+//        hasInputStarted = false;
+//        hasStartedRunning = false;
+//        isWalking = false;
+//        isJumping = false;
+//        currentHealth = maxHealth;
+//        lastStage = ItemsManager.SpeedStage.Walking;
+//        PlayState(idleHash);
+//    }
+
+//    public void TakeDamage(int amount = 1)
+//    {
+//        if (isDead) return;
+
+//        currentHealth = Mathf.Max(currentHealth - amount, 0);
+//        if (currentHealth == 0)
+//        {
+//            HandleDeath();
+//        }
+//    }
+
+//    public bool TryStartJump()
+//    {
+//        if (isDead || isJumping) return false;
+
+//        StartJump();
+//        return true;
+//    }
+
+//    void StartRunning()
+//    {
+//        hasStartedRunning = true;
+//        isWalking = false;
+
+//        // Start with appropriate animation based on current coin count
+//        UpdateMovementAnimation();
+//    }
+
+//    void StartJump()
+//    {
+//        isJumping = true;
+//        hasStartedRunning = true;
+//        isWalking = false;
+//        jumpTimer = jumpReturnDelay;
+//        PlayState(jumpHash);
+//    }
+
+//    void HandleDeath()
+//    {
+//        isDead = true;
+//        PlayState(deathHash);
+//    }
+
+//    public void TriggerVictory()
+//    {
+//        if (isDead || isJumping) return;
+//        HandleVictory();
+//    }
+
+//    void HandleVictory()
+//    {
+//        isVictorious = true;
+//        PlayState(victoryHash);
+//        hasStartedRunning = false;
+//        isWalking = false;
+//        isJumping = false;
+//    }
+
+//    void PlayState(int stateHash)
+//    {
+//        if (animator == null) return;
+
+//        if (animator.HasState(0, stateHash))
+//        {
+//            animator.CrossFadeInFixedTime(stateHash, stateCrossFade);
+//        }
+//        else if (animator.HasState(0, idleHash))
+//        {
+//            animator.CrossFadeInFixedTime(idleHash, stateCrossFade);
+//        }
+//    }
+
+//    void BeginWalkingPhase()
+//    {
+//        hasInputStarted = true;
+//        hasStartedRunning = false;
+//        isWalking = true;
+//        walkTimer = walkLeadSeconds;
+//        PlayState(walkingHash);
+//    }
+//}
+
+
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -23,10 +234,9 @@ public class animationStateController : MonoBehaviour
     bool isWalking;
     bool isJumping;
     bool isDead;
-
     bool isVictorious;
-    public bool IsVictorious => isVictorious;
 
+    public bool IsVictorious => isVictorious;
     public bool IsDead => isDead;
     public bool HasInputStarted => hasInputStarted;
     public bool IsWalking => isWalking;
@@ -35,11 +245,13 @@ public class animationStateController : MonoBehaviour
 
     readonly int idleHash = Animator.StringToHash("Idle");
     readonly int walkingHash = Animator.StringToHash("Walking");
+    readonly int joggingHash = Animator.StringToHash("Jog Forward");
     readonly int runningHash = Animator.StringToHash("Running");
     readonly int jumpHash = Animator.StringToHash("Jump");
     readonly int deathHash = Animator.StringToHash("Death");
     readonly int victoryHash = Animator.StringToHash("Victory");
 
+    private ItemsManager.SpeedStage lastStage = ItemsManager.SpeedStage.Walking;
 
     void Start()
     {
@@ -51,12 +263,14 @@ public class animationStateController : MonoBehaviour
     {
         if (isDead || isVictorious) return;
 
+        // ENTRY
         if (!hasInputStarted)
         {
             var keyboard = Keyboard.current;
             if (keyboard != null && keyboard.anyKey.wasPressedThisFrame)
             {
-                BeginWalkingPhase(); // première entrée utilisateur : on lance la phase de marche
+                Debug.Log("[STATE] Input detected -> BeginWalkingPhase()");
+                BeginWalkingPhase();
             }
         }
         else if (!hasStartedRunning)
@@ -64,8 +278,15 @@ public class animationStateController : MonoBehaviour
             walkTimer -= Time.deltaTime;
             if (walkTimer <= 0f)
             {
-                StartRunning(); // après la marche, on passe en course
+                Debug.Log("[STATE] walkTimer finished -> StartRunning()");
+                StartRunning();
             }
+        }
+
+        // Movement animation switching
+        if (hasStartedRunning && !isJumping)
+        {
+            UpdateMovementAnimation();
         }
 
         if (isJumping)
@@ -73,30 +294,80 @@ public class animationStateController : MonoBehaviour
             jumpTimer -= Time.deltaTime;
             if (jumpTimer <= 0f)
             {
+                Debug.Log("[JUMP] Returned from jump. Forcing state update.");
                 isJumping = false;
-                StartRunning(); // retour automatique à la course après le saut
+                StartRunning();
+                UpdateMovementAnimation();
+            }
+        }
+    }
+
+    void UpdateMovementAnimation()
+    {
+        ItemsManager.SpeedStage currentStage = ItemsManager.CurrentStage;
+
+        // Print coin count + stage
+        Debug.Log($"[SPEED] Coins: {ItemsManager.coinsCollected} | Stage: {currentStage}");
+
+        if (currentStage != lastStage)
+        {
+            Debug.Log($"[SPEED] Stage changed: {lastStage} -> {currentStage}");
+            lastStage = currentStage;
+
+            switch (currentStage)
+            {
+                case ItemsManager.SpeedStage.Walking:
+                    Debug.Log("[ANIM] Playing WALKING");
+                    PlayState(walkingHash);
+                    break;
+
+                case ItemsManager.SpeedStage.Jogging:
+                    Debug.Log("[ANIM] Playing JOG FORWARD");
+                    PlayState(joggingHash);
+                    break;
+
+                case ItemsManager.SpeedStage.Running:
+                    Debug.Log("[ANIM] Playing RUNNING");
+                    PlayState(runningHash);
+                    break;
             }
         }
     }
 
     public void ResetRun()
     {
+        Debug.Log("[RESET] ResetRun() called.");
+
+        // **RESET COINS**
+        ItemsManager.coinsCollected = 0;
+        ItemsManager.CurrentStage = ItemsManager.SpeedStage.Walking;
+
+        Debug.Log("[RESET] Coins reset to 0. Stage reset to WALKING.");
+
         isDead = false;
         hasInputStarted = false;
         hasStartedRunning = false;
         isWalking = false;
         isJumping = false;
         currentHealth = maxHealth;
+        lastStage = ItemsManager.SpeedStage.Walking;
         PlayState(idleHash);
+
+        Debug.Log("[RESET] Player health, movement flags and animation reset.");
     }
 
     public void TakeDamage(int amount = 1)
     {
+        Debug.Log($"[DAMAGE] Player takes {amount} damage. Health BEFORE: {currentHealth}");
+
         if (isDead) return;
 
         currentHealth = Mathf.Max(currentHealth - amount, 0);
+        Debug.Log($"[DAMAGE] Health AFTER: {currentHealth}");
+
         if (currentHealth == 0)
         {
+            Debug.Log("[DAMAGE] Health reached 0 -> HandleDeath()");
             HandleDeath();
         }
     }
@@ -105,6 +376,7 @@ public class animationStateController : MonoBehaviour
     {
         if (isDead || isJumping) return false;
 
+        Debug.Log("[JUMP] TryStartJump() -> StartJump()");
         StartJump();
         return true;
     }
@@ -113,7 +385,9 @@ public class animationStateController : MonoBehaviour
     {
         hasStartedRunning = true;
         isWalking = false;
-        PlayState(runningHash); // déclenche l'anim de course
+
+        Debug.Log("[STATE] StartRunning() -> Updating movement animation");
+        UpdateMovementAnimation();
     }
 
     void StartJump()
@@ -122,57 +396,64 @@ public class animationStateController : MonoBehaviour
         hasStartedRunning = true;
         isWalking = false;
         jumpTimer = jumpReturnDelay;
-        PlayState(jumpHash); // déclenche l'anim de saut
+
+        Debug.Log("[JUMP] Playing jump animation.");
+        PlayState(jumpHash);
     }
 
     void HandleDeath()
     {
+        Debug.Log("[DEATH] Playing death animation.");
         isDead = true;
-        PlayState(deathHash); // déclenche l'anim de mort
+        PlayState(deathHash);
     }
-
 
     public void TriggerVictory()
     {
         if (isDead || isJumping) return;
+        Debug.Log("[VICTORY] TriggerVictory() called");
         HandleVictory();
     }
 
     void HandleVictory()
     {
-        isVictorious = true;  
+        Debug.Log("[VICTORY] Playing victory animation.");
+        isVictorious = true;
         PlayState(victoryHash);
         hasStartedRunning = false;
         isWalking = false;
         isJumping = false;
     }
 
-
-
-
     void PlayState(int stateHash)
     {
-        Debug.Log("Playing state: " + stateHash); 
-
-        if (animator == null) return;
+        if (animator == null)
+        {
+            Debug.LogError("[ANIM] Animator missing!");
+            return;
+        }
 
         if (animator.HasState(0, stateHash))
         {
+            Debug.Log($"[ANIM] CrossFade to state hash {stateHash}");
             animator.CrossFadeInFixedTime(stateHash, stateCrossFade);
         }
-        else if (animator.HasState(0, idleHash))
+        else
         {
+            Debug.LogWarning($"[ANIM] Missing state hash {stateHash}! Falling back to IDLE.");
             animator.CrossFadeInFixedTime(idleHash, stateCrossFade);
         }
     }
 
-
     void BeginWalkingPhase()
     {
+        Debug.Log("[STATE] BeginWalkingPhase() - Starting walking phase.");
         hasInputStarted = true;
         hasStartedRunning = false;
         isWalking = true;
         walkTimer = walkLeadSeconds;
+
         PlayState(walkingHash);
     }
 }
+
