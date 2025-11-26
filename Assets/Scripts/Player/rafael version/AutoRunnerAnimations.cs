@@ -85,7 +85,7 @@ public class AutoRunnerAnimation : MonoBehaviour
                     PlayState(crouchHash);
                 else
                 {
-                    lastStage = ItemsManager.SpeedStage.Walking; // reset to force update
+                    lastStage = ItemsManager.SpeedStage.Walking;
                     UpdateMovementAnimation();
                 }
             }
@@ -109,7 +109,7 @@ public class AutoRunnerAnimation : MonoBehaviour
                 case ItemsManager.SpeedStage.Running: PlayState(runningHash); break;
             }
 
-            hasStartedRunning = true; // mark movement started after animation set
+            hasStartedRunning = true; 
         }
     }
 

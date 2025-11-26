@@ -7,8 +7,8 @@ public class ItemsManager : MonoBehaviour
     public TextMeshProUGUI coinCountDisplay;
 
     [Header("Speed Stage Settings")]
-    public int coinsForJog = 5;      // coins needed to reach jog stage
-    public int coinsForRun = 10;     // coins needed to reach run stage
+    public int coinsForJog = 5;    
+    public int coinsForRun = 10;   
 
     public enum SpeedStage { Walking, Jogging, Running }
     public static SpeedStage CurrentStage { get;  set; }

@@ -14,7 +14,7 @@ public class LevelManager : MonoBehaviour
 
 
 
-    public static bool GlobalFreeze = false; // all enemies check this
+    public static bool GlobalFreeze = false;
 
 
     void Awake()
@@ -42,13 +42,13 @@ public class LevelManager : MonoBehaviour
 
         GlobalFreeze = true;
 
-        if (animController != null)  // ← Add this
+        if (animController != null) 
             animController.TriggerVictory();
 
-        if (audioManager != null)    // ← Add this
+        if (audioManager != null)   
             audioManager.PlaySFX(audioManager.victory);
 
-        if (playerMover != null)     // ← Add this
+        if (playerMover != null)    
             playerMover.enabled = false;
 
 
@@ -66,10 +66,10 @@ public class LevelManager : MonoBehaviour
 
         GlobalFreeze = true;
 
-        if (audioManager != null)  // ← Null check here
+        if (audioManager != null)
             audioManager.PlaySFX(audioManager.death);
 
-        if (playerMover != null)   // ← Null check here
+        if (playerMover != null) 
             playerMover.enabled = false;
 
 
