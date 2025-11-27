@@ -8,8 +8,8 @@ public class ObstacleCollision : MonoBehaviour
     public int damage = 1;
     public int coinPenalty = 1;
     public bool destroyOnHit = false;
-    public float knockbackDistance = 2f;
-    public float pushOutBuffer = 0.25f; // extra distance to place player outside collider
+    public float knockbackDistance = 10f;
+    public float pushOutBuffer = 2f; // extra distance to place player outside collider
     public bool addKinematicRigidbody = true;
 
     AudioManager audioManager;
