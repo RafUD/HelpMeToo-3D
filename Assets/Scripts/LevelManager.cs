@@ -7,8 +7,8 @@ public class LevelManager : MonoBehaviour
     public AutoRunner playerMover;
     public AudioManager audioManager;
 
-    public float victoryDelay = 2f;
-    public float deathDelay = 2f;
+    public float victoryDelay = 6f;
+    public float deathDelay = 3f;
 
     bool levelEnded = false;
 
@@ -57,7 +57,7 @@ public class LevelManager : MonoBehaviour
             playerMover.enabled = false;
 
         ItemsManager.coinsCollected = 0;
-
+        //Find("FadeOut"))
         Invoke(nameof(RestartLevel), deathDelay);
     }
 
