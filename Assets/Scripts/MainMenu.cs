@@ -24,6 +24,9 @@ public class MainMenu : MonoBehaviour
         StartCoroutine(StartButton());
     }
 
+    public void Exit(){
+        Application.Quit();
+    }
 
     IEnumerator StartButton()
     {
