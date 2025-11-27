@@ -1,13 +1,13 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1102 &-3868542009243919633
+--- !u!1102 &-9111755623633242404
 AnimatorState:
   serializedVersion: 6
   m_ObjectHideFlags: 1
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Old Man Walk
+  m_Name: Mutant Dying
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions: []
@@ -20,13 +20,13 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: 7400000, guid: e1dc60cc56a8b90438370c2652b3a65e, type: 2}
+  m_Motion: {fileID: 7400000, guid: 0db59ce753f94ca41b416a51ed907795, type: 2}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 
   m_CycleOffsetParameter: 
   m_TimeParameter: 
---- !u!1107 &-1574742110475827033
+--- !u!1107 &-8926428763644061433
 AnimatorStateMachine:
   serializedVersion: 6
   m_ObjectHideFlags: 1
@@ -36,14 +36,14 @@ AnimatorStateMachine:
   m_Name: Base Layer
   m_ChildStates:
   - serializedVersion: 1
-    m_State: {fileID: -3868542009243919633}
-    m_Position: {x: 240, y: 130, z: 0}
+    m_State: {fileID: 8996744781148080296}
+    m_Position: {x: 240, y: 20, z: 0}
   - serializedVersion: 1
-    m_State: {fileID: 243325384961197915}
-    m_Position: {x: 250, y: 0, z: 0}
+    m_State: {fileID: -9111755623633242404}
+    m_Position: {x: 70, y: 240, z: 0}
   - serializedVersion: 1
-    m_State: {fileID: -1513356488437383381}
-    m_Position: {x: 250, y: 50, z: 0}
+    m_State: {fileID: -3479079943210768366}
+    m_Position: {x: 340, y: 140, z: 0}
   m_ChildStateMachines: []
   m_AnyStateTransitions: []
   m_EntryTransitions: []
@@ -53,16 +53,16 @@ AnimatorStateMachine:
   m_EntryPosition: {x: 50, y: 120, z: 0}
   m_ExitPosition: {x: 800, y: 120, z: 0}
   m_ParentStateMachinePosition: {x: 800, y: 20, z: 0}
-  m_DefaultState: {fileID: -3868542009243919633}
---- !u!1102 &-1513356488437383381
+  m_DefaultState: {fileID: 8996744781148080296}
+--- !u!1102 &-3479079943210768366
 AnimatorState:
   serializedVersion: 6
   m_ObjectHideFlags: 1
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Attack
-  m_Speed: 2
+  m_Name: Mutant Punch
+  m_Speed: 1
   m_CycleOffset: 0
   m_Transitions: []
   m_StateMachineBehaviours: []
@@ -74,7 +74,7 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: 7400000, guid: faf1bff45241c0848b38af25f6c8c9a3, type: 2}
+  m_Motion: {fileID: 7400000, guid: 75cd5d9a6e5c17442a578588c6a65835, type: 2}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 
@@ -86,13 +86,13 @@ AnimatorController:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Ch39_nonPBR@Old Man Walk
+  m_Name: Vampire A Lusth@Mutant Run
   serializedVersion: 5
   m_AnimatorParameters: []
   m_AnimatorLayers:
   - serializedVersion: 5
     m_Name: Base Layer
-    m_StateMachine: {fileID: -1574742110475827033}
+    m_StateMachine: {fileID: -8926428763644061433}
     m_Mask: {fileID: 0}
     m_Motions: []
     m_Behaviours: []
@@ -102,14 +102,14 @@ AnimatorController:
     m_IKPass: 0
     m_SyncedLayerAffectsTiming: 0
     m_Controller: {fileID: 9100000}
---- !u!1102 &243325384961197915
+--- !u!1102 &8996744781148080296
 AnimatorState:
   serializedVersion: 6
   m_ObjectHideFlags: 1
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Running
+  m_Name: Mutant Run
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions: []
@@ -122,7 +122,7 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: 7400000, guid: 7ffd3db8b1f1c6e4aaf77b09b6b42dfc, type: 2}
+  m_Motion: {fileID: 7400000, guid: 9f5255078a383b04795a69dfee40ab31, type: 2}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 

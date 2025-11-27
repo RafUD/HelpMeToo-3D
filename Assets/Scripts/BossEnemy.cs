@@ -1,8 +1,8 @@
-﻿using UnityEngine;
+using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
 [RequireComponent(typeof(Animator))]
-public class Enemy : MonoBehaviour
+public class BossEnemy : MonoBehaviour
 {
     [Header("References")]
     public Transform target; // Player
@@ -17,83 +17,66 @@ public class Enemy : MonoBehaviour
     public float patrolSpeed = 3f;
     public float patrolWaitTime = 1f;
 
+    [Header("Boss Specific Settings")]
+    public int coinsRequiredToDefeat = 50;
+
     private Rigidbody rb;
     private Animator animator;
 
     private Transform currentPatrolTarget;
     private bool isChasing;
-    private bool isWaiting;
     private float patrolWaitTimer;
-    private bool isPatrolling;
 
-    // Track current animation
     private int currentAnimHash = -1;
 
-    // Animator hashes
-    private readonly int walkHash = Animator.StringToHash("Old Man Walk");
-    private readonly int runHash = Animator.StringToHash("Running");
-    private readonly int attackHash = Animator.StringToHash("Attack");
+    private readonly int runHash = Animator.StringToHash("Mutant Run");
+    private readonly int attackWinHash = Animator.StringToHash("Mutant Punch"); // Boss wins
+    private readonly int attackLoseHash = Animator.StringToHash("Mutant Dying"); // Player wins
 
     void Start()
     {
         rb = GetComponent<Rigidbody>();
         animator = GetComponent<Animator>();
 
-        currentPatrolTarget = pointA;
-        isPatrolling = false;
+        currentPatrolTarget = pointB;
+        isChasing = false;
+        patrolWaitTimer = 0f;
 
-        PlayAnimation(walkHash); // Start patrol animation
+        PlayAnimation(runHash); // Boss always runs
     }
 
-    void FixedUpdate()
+    void Update()
     {
-        if (LevelManager.GlobalFreeze) return;
+        // Don't act if player is dead or boss is in animation freeze
+        var playerAnim = target.GetComponent<AutoRunnerAnimation>();
+        if (playerAnim != null && playerAnim.IsDead) return;
 
         float distanceToPlayer = Vector3.Distance(target.position, transform.position);
 
         if (distanceToPlayer <= detectionRange)
         {
-            if (!isChasing) EnterChaseMode();
+            if (!isChasing)
+            {
+                isChasing = true;
+                patrolWaitTimer = 0f;
+            }
             ChasePlayer();
+            PlayAnimation(runHash);
         }
         else
         {
-            if (isChasing) ExitChaseMode();
+            if (isChasing)
+                isChasing = false;
             Patrol();
+            PlayAnimation(runHash);
         }
-    }
-
-    void EnterChaseMode()
-    {
-        isChasing = true;
-        isWaiting = false;
-        isPatrolling = false;
-        PlayAnimation(runHash);
-    }
-
-    void ExitChaseMode()
-    {
-        isChasing = false;
-        isPatrolling = false;
-        PlayAnimation(walkHash);
     }
 
     void Patrol()
     {
-        if (!isPatrolling)
-        {
-            PlayAnimation(walkHash);
-            isPatrolling = true;
-        }
-
-        if (isWaiting)
+        if (patrolWaitTimer > 0f)
         {
             patrolWaitTimer -= Time.fixedDeltaTime;
-            if (patrolWaitTimer <= 0f)
-            {
-                isWaiting = false;
-                currentPatrolTarget = (currentPatrolTarget == pointA) ? pointB : pointA;
-            }
             return;
         }
 
@@ -111,15 +94,13 @@ public class Enemy : MonoBehaviour
 
         if (Vector3.Distance(transform.position, targetPos) < 0.3f)
         {
-            isWaiting = true;
+            currentPatrolTarget = (currentPatrolTarget == pointA) ? pointB : pointA;
             patrolWaitTimer = patrolWaitTime;
         }
     }
 
     void ChasePlayer()
     {
-        PlayAnimation(runHash);
-
         Vector3 targetPos = new Vector3(target.position.x, transform.position.y, target.position.z);
         Vector3 direction = (targetPos - transform.position).normalized;
 
@@ -135,48 +116,57 @@ public class Enemy : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Player") && !LevelManager.GlobalFreeze)
+        if (!other.CompareTag("Player")) return;
+
+        var playerAnim = other.GetComponent<AutoRunnerAnimation>();
+        if (playerAnim == null || playerAnim.IsDead) return;
+
+        int playerCoins = ItemsManager.coinsCollected;
+        LevelManager level = FindFirstObjectByType<LevelManager>();
+
+        if (playerCoins >= coinsRequiredToDefeat)
         {
-            PlayAnimation(attackHash);
+            // Player defeats boss
+            PlayAnimation(attackLoseHash);
+            Debug.Log($"Boss defeated! Player coins: {playerCoins}/{coinsRequiredToDefeat}");
 
-            var anim = other.GetComponent<AutoRunnerAnimation>();
-            if (anim != null) anim.TakeDamage(999);
+            if (level != null)
+                level.WinLevel();
 
-            LevelManager.GlobalFreeze = true;
-            LevelManager levelManager = FindFirstObjectByType<LevelManager>();
-            if (levelManager != null) levelManager.PlayerDied();
+            Destroy(gameObject, 2f); // Destroy after animation
+        }
+        else
+        {
+            // Boss wins
+            PlayAnimation(attackWinHash);
+            Debug.Log($"Boss wins! Player coins: {playerCoins}/{coinsRequiredToDefeat}");
+
+            playerAnim.TakeDamage(playerAnim.maxHealth); // Ensure player dies
+            if (level != null)
+                level.PlayerDied();
         }
     }
 
     private void PlayAnimation(int hash)
     {
         if (animator == null) return;
-
         if (currentAnimHash == hash) return;
 
         if (animator.HasState(0, hash))
         {
-            // Play first frame immediately, then crossfade
-            animator.Play(hash, 0, 0f);
-            animator.CrossFadeInFixedTime(hash, 0.2f);
+            animator.CrossFade(hash, 0.1f);
             currentAnimHash = hash;
-        }
-        else
-        {
-            Debug.LogWarning($"[Enemy] Animator state not found! Hash: {hash}");
         }
     }
 
     private void OnDrawGizmosSelected()
     {
-        // Detection range
-        Gizmos.color = Color.yellow;
+        Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, detectionRange);
 
-        // Patrol points
         if (pointA != null && pointB != null)
         {
-            Gizmos.color = Color.green;
+            Gizmos.color = Color.cyan;
             Gizmos.DrawLine(pointA.position, pointB.position);
             Gizmos.DrawWireSphere(pointA.position, 0.5f);
             Gizmos.DrawWireSphere(pointB.position, 0.5f);

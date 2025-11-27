@@ -99,13 +99,14 @@ public class AutoRunner : MonoBehaviour
         float forwardSpeed = (canMove && !isCrouching) ? GetCurrentSpeed() : 0f;
 
         // Lateral movement
-        float targetZ = transform.position.z;
-        if (canMove)
+        float lateralDelta = 0f;
+        if (canMove && !isCrouching) // block lateral movement when crouched
         {
-            targetZ = Mathf.Clamp(transform.position.z + horizontal * strafeSpeed * Time.deltaTime,
-                                  LevelBoundary.leftSide, LevelBoundary.rightSide);
+            float targetZ = Mathf.Clamp(transform.position.z + horizontal * strafeSpeed * Time.deltaTime,
+                                        LevelBoundary.leftSide, LevelBoundary.rightSide);
+            lateralDelta = targetZ - transform.position.z;
         }
-        float lateralDelta = targetZ - transform.position.z;
+
 
         // Rotation (tilt)
         float targetYaw = canMove ? Mathf.Clamp(horizontal, -1f, 1f) * tiltAngle : 0f;

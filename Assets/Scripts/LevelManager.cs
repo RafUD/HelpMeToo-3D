@@ -12,77 +12,58 @@ public class LevelManager : MonoBehaviour
 
     bool levelEnded = false;
 
-
-
-    public static bool GlobalFreeze = false;
-
-
     void Awake()
     {
-
-        GlobalFreeze = false; // Reset when level loads
-
-
         if (animController == null)
             animController = FindFirstObjectByType<AutoRunnerAnimation>();
 
         if (playerMover == null)
-            playerMover = FindFirstObjectByType<AutoRunner>(); 
+            playerMover = FindFirstObjectByType<AutoRunner>();
 
         if (audioManager == null)
             audioManager = FindFirstObjectByType<AudioManager>();
     }
 
-
-    //      PLAYER WINS
+    // PLAYER WINS
     public void WinLevel()
     {
         if (levelEnded) return;
         levelEnded = true;
 
-        GlobalFreeze = true;
-
-        if (animController != null) 
+        if (animController != null)
             animController.TriggerVictory();
 
-        if (audioManager != null)   
+        if (audioManager != null)
             audioManager.PlaySFX(audioManager.victory);
 
-        if (playerMover != null)    
+        if (playerMover != null)
             playerMover.enabled = false;
 
-
         ItemsManager.coinsCollected = 0;
-
 
         Invoke(nameof(LoadNextLevel), victoryDelay);
     }
 
-    //      PLAYER LOSES
+    // PLAYER LOSES
     public void PlayerDied()
     {
         if (levelEnded) return;
         levelEnded = true;
 
-        GlobalFreeze = true;
-
         if (audioManager != null)
             audioManager.PlaySFX(audioManager.death);
 
-        if (playerMover != null) 
+        if (playerMover != null)
             playerMover.enabled = false;
 
-
         ItemsManager.coinsCollected = 0;
-
 
         Invoke(nameof(RestartLevel), deathDelay);
     }
 
-    //  Scene Management
     void LoadNextLevel()
     {
-        SceneManager.LoadScene(0); //menu, un seul niveau
+        SceneManager.LoadScene(0); // menu
     }
 
     void RestartLevel()

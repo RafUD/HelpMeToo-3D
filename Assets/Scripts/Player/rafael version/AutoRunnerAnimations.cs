@@ -14,6 +14,9 @@ public class AutoRunnerAnimation : MonoBehaviour
     [Header("Health Settings")]
     public int maxHealth = 3;
 
+    [Header("UI")]
+    public HealthBarUI healthBarUI;
+
     Animator animator;
     int currentHealth;
     float jumpTimer;
@@ -33,7 +36,6 @@ public class AutoRunnerAnimation : MonoBehaviour
     public bool IsJumping => isJumping;
     public bool IsCrouching => isCrouching;
 
-    // Animator hashes
     readonly int idleHash = Animator.StringToHash("Idle");
     readonly int walkingHash = Animator.StringToHash("Walking");
     readonly int joggingHash = Animator.StringToHash("Jog Forward");
@@ -50,10 +52,14 @@ public class AutoRunnerAnimation : MonoBehaviour
         animator = GetComponent<Animator>();
         ResetRun();
 
-        if (autoStart)
+        if (healthBarUI != null)
         {
-            StartMovementPhase();
+            healthBarUI.SetMaxHealth(maxHealth);
+            healthBarUI.SetHealth(currentHealth);
         }
+
+        if (autoStart)
+            StartMovementPhase();
     }
 
     void Update()
@@ -62,19 +68,12 @@ public class AutoRunnerAnimation : MonoBehaviour
 
         var keyboard = Keyboard.current;
 
-        // START INPUT (manual start)
         if (!autoStart && !hasInputStarted && keyboard != null && keyboard.anyKey.wasPressedThisFrame)
-        {
             StartMovementPhase();
-        }
 
-        // Update movement animation if running and not jumping/crouching
         if (hasStartedRunning && !isJumping && !isCrouching)
-        {
             UpdateMovementAnimation();
-        }
 
-        // Jump timer
         if (isJumping)
         {
             jumpTimer -= Time.deltaTime;
@@ -94,7 +93,7 @@ public class AutoRunnerAnimation : MonoBehaviour
 
     void UpdateMovementAnimation(bool forceUpdate = false)
     {
-        if (isCrouching) return; // crouch overrides movement
+        if (isCrouching) return;
 
         ItemsManager.SpeedStage currentStage = ItemsManager.CurrentStage;
 
@@ -109,10 +108,9 @@ public class AutoRunnerAnimation : MonoBehaviour
                 case ItemsManager.SpeedStage.Running: PlayState(runningHash); break;
             }
 
-            hasStartedRunning = true; 
+            hasStartedRunning = true;
         }
     }
-
 
     public void TriggerCrouch()
     {
@@ -124,17 +122,13 @@ public class AutoRunnerAnimation : MonoBehaviour
     public void ExitCrouch()
     {
         if (isDead || isVictorious) return;
-
         isCrouching = false;
-
-        // Force animation to match current stage (ignore lastStage)
         UpdateMovementAnimation(forceUpdate: true);
     }
 
-
     public void ResetRun()
     {
-        ItemsManager.ResetCoins(); // reset coins globally
+        ItemsManager.ResetCoins();
 
         isDead = false;
         hasInputStarted = false;
@@ -143,11 +137,18 @@ public class AutoRunnerAnimation : MonoBehaviour
         isJumping = false;
         isCrouching = false;
         isVictorious = false;
+
         currentHealth = maxHealth;
 
         lastStage = ItemsManager.SpeedStage.Walking;
 
-        PlayState(idleHash); // idle immediately
+        PlayState(idleHash);
+
+        if (healthBarUI != null)
+        {
+            healthBarUI.SetMaxHealth(maxHealth);
+            healthBarUI.SetHealth(currentHealth);
+        }
     }
 
     public void TakeDamage(int amount = 1)
@@ -155,7 +156,23 @@ public class AutoRunnerAnimation : MonoBehaviour
         if (isDead) return;
 
         currentHealth = Mathf.Max(currentHealth - amount, 0);
-        if (currentHealth == 0) HandleDeath();
+
+        if (healthBarUI != null)
+            healthBarUI.SetHealth(currentHealth);
+
+        if (currentHealth == 0)
+            HandleDeath();
+    }
+
+    void HandleDeath()
+    {
+        isDead = true;
+        isCrouching = false;
+        PlayState(deathHash);
+
+        LevelManager level = FindFirstObjectByType<LevelManager>();
+        if (level != null)
+            level.PlayerDied();
     }
 
     public bool TryStartJump()
@@ -174,13 +191,6 @@ public class AutoRunnerAnimation : MonoBehaviour
         jumpTimer = jumpReturnDelay;
 
         PlayState(jumpHash);
-    }
-
-    void HandleDeath()
-    {
-        isDead = true;
-        isCrouching = false;
-        PlayState(deathHash);
     }
 
     public void TriggerVictory()
@@ -220,7 +230,6 @@ public class AutoRunnerAnimation : MonoBehaviour
         isWalking = true;
         isCrouching = false;
 
-        // Force animation to match current coin/speed stage
         lastStage = ItemsManager.SpeedStage.Walking;
         UpdateMovementAnimation();
     }
