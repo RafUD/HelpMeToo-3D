@@ -5,22 +5,23 @@ using UnityEngine.InputSystem;
 public class AutoRunnerAnimation : MonoBehaviour
 {
     [Header("Auto Run Settings")]
-    public float stateCrossFade = 0.2f;
-    public bool autoStart = false;
+    public float stateCrossFade = 0.2f; // Transition speed between animations
+    public bool autoStart = false;       // Automatically start running
 
     [Header("Jump Settings")]
-    public float jumpReturnDelay = 0.8f;
+    public float jumpReturnDelay = 0.8f; // Time before returning to movement after jump
 
     [Header("Health Settings")]
     public int maxHealth = 3;
 
     [Header("UI")]
-    public HealthBarUI healthBarUI;
+    public HealthBarUI healthBarUI; // UI element showing health
 
     Animator animator;
     int currentHealth;
     float jumpTimer;
 
+    // Player state flags
     bool hasInputStarted;
     bool hasStartedRunning;
     bool isWalking;
@@ -29,6 +30,7 @@ public class AutoRunnerAnimation : MonoBehaviour
     bool isVictorious;
     bool isCrouching;
 
+    // Public getters
     public bool IsVictorious => isVictorious;
     public bool IsDead => isDead;
     public bool HasInputStarted => hasInputStarted;
@@ -36,6 +38,7 @@ public class AutoRunnerAnimation : MonoBehaviour
     public bool IsJumping => isJumping;
     public bool IsCrouching => isCrouching;
 
+    // Animation hashes
     readonly int idleHash = Animator.StringToHash("Idle");
     readonly int walkingHash = Animator.StringToHash("Walking");
     readonly int joggingHash = Animator.StringToHash("Jog Forward");
@@ -45,12 +48,23 @@ public class AutoRunnerAnimation : MonoBehaviour
     readonly int deathHash = Animator.StringToHash("Death");
     readonly int victoryHash = Animator.StringToHash("Victory");
 
+    // Track last movement stage
     private ItemsManager.SpeedStage lastStage = ItemsManager.SpeedStage.Walking;
+
+    AudioManager audioManager;
+
+    private void Awake()
+    {
+        // Locate the object tagged "Audio" and get AudioManager
+        GameObject audioObj = GameObject.FindGameObjectWithTag("Audio");
+        if (audioObj != null)
+            audioManager = audioObj.GetComponent<AudioManager>();
+    }
 
     void Start()
     {
         animator = GetComponent<Animator>();
-        ResetRun();
+        ResetRun(); // Initialize player state
 
         if (healthBarUI != null)
         {
@@ -68,12 +82,15 @@ public class AutoRunnerAnimation : MonoBehaviour
 
         var keyboard = Keyboard.current;
 
+        // Start running if input detected and not already started
         if (!autoStart && !hasInputStarted && keyboard != null && keyboard.anyKey.wasPressedThisFrame)
             StartMovementPhase();
 
+        // Update movement animation
         if (hasStartedRunning && !isJumping && !isCrouching)
             UpdateMovementAnimation();
 
+        // Handle jump timer
         if (isJumping)
         {
             jumpTimer -= Time.deltaTime;
@@ -99,8 +116,10 @@ public class AutoRunnerAnimation : MonoBehaviour
 
         if (forceUpdate || currentStage != lastStage || !hasStartedRunning)
         {
-            lastStage = currentStage;
+            audioManager?.PlaySFX(audioManager.playerMove);
 
+            lastStage = currentStage;
+            
             switch (currentStage)
             {
                 case ItemsManager.SpeedStage.Walking: PlayState(walkingHash); break;
@@ -130,6 +149,7 @@ public class AutoRunnerAnimation : MonoBehaviour
     {
         ItemsManager.ResetCoins();
 
+        // Reset all flags
         isDead = false;
         hasInputStarted = false;
         hasStartedRunning = false;
@@ -139,10 +159,9 @@ public class AutoRunnerAnimation : MonoBehaviour
         isVictorious = false;
 
         currentHealth = maxHealth;
-
         lastStage = ItemsManager.SpeedStage.Walking;
 
-        PlayState(idleHash);
+        PlayState(idleHash); // Default to idle
 
         if (healthBarUI != null)
         {
@@ -157,8 +176,7 @@ public class AutoRunnerAnimation : MonoBehaviour
 
         currentHealth = Mathf.Max(currentHealth - amount, 0);
 
-        if (healthBarUI != null)
-            healthBarUI.SetHealth(currentHealth);
+        healthBarUI?.SetHealth(currentHealth);
 
         if (currentHealth == 0)
             HandleDeath();
@@ -170,9 +188,9 @@ public class AutoRunnerAnimation : MonoBehaviour
         isCrouching = false;
         PlayState(deathHash);
 
+        // Notify LevelManager
         LevelManager level = FindFirstObjectByType<LevelManager>();
-        if (level != null)
-            level.PlayerDied();
+        level?.PlayerDied();
     }
 
     public bool TryStartJump()
@@ -218,6 +236,7 @@ public class AutoRunnerAnimation : MonoBehaviour
             return;
         }
 
+        // Crossfade to target state or idle if missing
         if (animator.HasState(0, stateHash))
             animator.CrossFadeInFixedTime(stateHash, stateCrossFade);
         else

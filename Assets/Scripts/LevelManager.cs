@@ -1,19 +1,24 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class LevelManager : MonoBehaviour
 {
-    public AutoRunnerAnimation animController;
-    public AutoRunner playerMover;
-    public AudioManager audioManager;
+    public AutoRunnerAnimation animController; 
+    public AutoRunner playerMover;             
+    public AudioManager audioManager;          
 
-    public float victoryDelay = 6f;
-    public float deathDelay = 3f;
+    public float victoryDelay = 10f; // Delay before loading next level after victory
+    public float deathDelay = 8f;    // Delay before restarting level after death
 
-    bool levelEnded = false;
+    bool levelEnded = false; // prevent multiple triggers
+
+    public GameObject loseScreen;    
+    public GameObject victoryScreen; 
 
     void Awake()
     {
+        // Auto-find references if not assigned
         if (animController == null)
             animController = FindFirstObjectByType<AutoRunnerAnimation>();
 
@@ -27,47 +32,58 @@ public class LevelManager : MonoBehaviour
     // PLAYER WINS
     public void WinLevel()
     {
-        if (levelEnded) return;
+        if (levelEnded) return; // Prevent multiple calls
         levelEnded = true;
 
-        if (animController != null)
-            animController.TriggerVictory();
+        animController?.TriggerVictory();       
+        audioManager?.PlaySFX(audioManager.victory); 
+        if (playerMover != null) playerMover.enabled = false;
 
-        if (audioManager != null)
-            audioManager.PlaySFX(audioManager.victory);
+        if (victoryScreen != null) victoryScreen.SetActive(true); 
 
-        if (playerMover != null)
-            playerMover.enabled = false;
+        StartCoroutine(LoadNextAfterDelay());
+    }
 
-        ItemsManager.coinsCollected = 0;
-
-        Invoke(nameof(LoadNextLevel), victoryDelay);
+    IEnumerator LoadNextAfterDelay()
+    {
+        yield return new WaitForSecondsRealtime(victoryDelay);
+        ItemsManager.coinsCollected = 0; // Reset coins
+        LoadMenu();
     }
 
     // PLAYER LOSES
     public void PlayerDied()
     {
-        if (levelEnded) return;
+        if (levelEnded) return; // Prevent multiple calls
         levelEnded = true;
 
-        if (audioManager != null)
-            audioManager.PlaySFX(audioManager.death);
+        audioManager?.PlaySFX(audioManager.death); 
+        if (playerMover != null) playerMover.enabled = false; 
 
-        if (playerMover != null)
-            playerMover.enabled = false;
+        ItemsManager.coinsCollected = 0; // Reset coins
 
-        ItemsManager.coinsCollected = 0;
-        //Find("FadeOut"))
-        Invoke(nameof(RestartLevel), deathDelay);
+        if (loseScreen != null) loseScreen.SetActive(true); 
+
+        //Time.timeScale = 0f; // Pause game
+
+        StartCoroutine(RestartAfterDelay());
     }
 
-    void LoadNextLevel()
+    IEnumerator RestartAfterDelay()
     {
-        SceneManager.LoadScene(0); // menu
+        yield return new WaitForSecondsRealtime(deathDelay);
+
+        Time.timeScale = 1f; // Resume time
+        RestartLevel();
+    }
+
+    void LoadMenu()
+    {
+        SceneManager.LoadScene(0); // Load menu
     }
 
     void RestartLevel()
     {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex); 
     }
 }

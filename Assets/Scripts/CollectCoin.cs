@@ -2,10 +2,11 @@ using UnityEngine;
 
 public class CollectCoin : MonoBehaviour
 {
-    AudioManager audioManager;
+    AudioManager audioManager;  
 
     private void Awake()
     {
+        // Locate the object tagged "Audio" and get AudioManager
         GameObject audioObj = GameObject.FindGameObjectWithTag("Audio");
         if (audioObj != null)
             audioManager = audioObj.GetComponent<AudioManager>();
@@ -13,26 +14,26 @@ public class CollectCoin : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+        // Only the player can collect coins
         if (other.CompareTag("Player"))
         {
-            // Play coin sound
             if (audioManager != null)
                 audioManager.PlaySFX(audioManager.coin);
 
-            // Store previous stage
+            // Save old speed stage
             ItemsManager.SpeedStage previousStage = ItemsManager.CurrentStage;
 
-            // Collect coin
+            // Increase coin count
             ItemsManager.coinsCollected += 1;
 
-            // Check if stage upgraded (optional: play special sound)
+            // Check if a new speed stage was reached
             ItemsManager.SpeedStage newStage = ItemsManager.CurrentStage;
             if (newStage != previousStage && audioManager != null)
             {
-                // Play power-up sound when reaching new speed stage
-                audioManager.PlaySFX(audioManager.powerUp);
+                audioManager.PlaySFX(audioManager.powerUp); // Play speed-upgrade sound
             }
 
+            // Remove the coin from the scene
             Destroy(gameObject);
         }
     }
