@@ -330,6 +330,7 @@ GameObject:
   - component: {fileID: 525501891}
   - component: {fileID: 525501890}
   - component: {fileID: 525501889}
+  - component: {fileID: 525501892}
   m_Layer: 0
   m_Name: Terrain Rafael
   m_TagString: Untagged
@@ -412,6 +413,38 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &525501892
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 525501888}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a5ac11cc976e418e8d13136b07e1f52, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.AI.Navigation::Unity.AI.Navigation.NavMeshSurface
+  m_SerializedVersion: 0
+  m_AgentTypeID: 0
+  m_CollectObjects: 0
+  m_Size: {x: 10, y: 10, z: 10}
+  m_Center: {x: 0, y: 2, z: 0}
+  m_LayerMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_UseGeometry: 0
+  m_DefaultArea: 0
+  m_GenerateLinks: 0
+  m_IgnoreNavMeshAgent: 1
+  m_IgnoreNavMeshObstacle: 1
+  m_OverrideTileSize: 0
+  m_TileSize: 256
+  m_OverrideVoxelSize: 0
+  m_VoxelSize: 0.16666667
+  m_MinRegionArea: 2
+  m_NavMeshData: {fileID: 23800000, guid: 99feeb93038f39642be481e90916b06d, type: 2}
+  m_BuildHeightMesh: 0
 --- !u!1 &603750494
 GameObject:
   m_ObjectHideFlags: 0
@@ -1240,7 +1273,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 281427919503891342, guid: 06814ebc7a35bfc41bd3f0d194dc203d, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 70.352
+      value: 71.29
       objectReference: {fileID: 0}
     - target: {fileID: 281427919503891342, guid: 06814ebc7a35bfc41bd3f0d194dc203d, type: 3}
       propertyPath: m_LocalPosition.y
@@ -1278,10 +1311,18 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1487547321229968411, guid: 06814ebc7a35bfc41bd3f0d194dc203d, type: 3}
+      propertyPath: m_Speed
+      value: 5
+      objectReference: {fileID: 0}
     - target: {fileID: 2486174903317265050, guid: 06814ebc7a35bfc41bd3f0d194dc203d, type: 3}
       propertyPath: m_Name
       value: Old Wizard v3
       objectReference: {fileID: 0}
+    - target: {fileID: 6549199772790830240, guid: 06814ebc7a35bfc41bd3f0d194dc203d, type: 3}
+      propertyPath: player
+      value: 
+      objectReference: {fileID: 478861774}
     - target: {fileID: 6549199772790830240, guid: 06814ebc7a35bfc41bd3f0d194dc203d, type: 3}
       propertyPath: pointA
       value: 
@@ -1294,6 +1335,18 @@ PrefabInstance:
       propertyPath: target
       value: 
       objectReference: {fileID: 478861774}
+    - target: {fileID: 6549199772790830240, guid: 06814ebc7a35bfc41bd3f0d194dc203d, type: 3}
+      propertyPath: speedOffset
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6549199772790830240, guid: 06814ebc7a35bfc41bd3f0d194dc203d, type: 3}
+      propertyPath: detectionRange
+      value: 70
+      objectReference: {fileID: 0}
+    - target: {fileID: 6549199772790830240, guid: 06814ebc7a35bfc41bd3f0d194dc203d, type: 3}
+      propertyPath: alwaysMatchPlayerSpeed
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

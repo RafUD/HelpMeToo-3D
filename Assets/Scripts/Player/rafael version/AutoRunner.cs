@@ -131,7 +131,7 @@ public class AutoRunner : MonoBehaviour
         anim?.ExitCrouch();
     }
 
-    float GetCurrentSpeed()
+    public float GetCurrentSpeed()
     {
         switch (ItemsManager.CurrentStage)
         {

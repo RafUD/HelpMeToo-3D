@@ -1,146 +1,124 @@
 ﻿using UnityEngine;
+using UnityEngine.AI;
 
-[RequireComponent(typeof(Rigidbody))]
+[RequireComponent(typeof(NavMeshAgent))]
 [RequireComponent(typeof(Animator))]
-public class Enemy : MonoBehaviour
+public class EnemyNavMeshAI : MonoBehaviour
 {
     [Header("References")]
-    public Transform target; // Player
+    public Transform[] patrolPoints;
+    public Transform player;
 
-    [Header("Chase Settings")]
+    [Header("Settings")]
     public float detectionRange = 10f;
-    public float chaseSpeed = 5f;
-
-    [Header("Patrol Settings")]
-    public Transform pointA;
-    public Transform pointB;
     public float patrolSpeed = 3f;
-    public float patrolWaitTime = 1f;
+    public float rotationSpeed = 5f;
+    public float attackRange = 1.5f;
 
-    private Rigidbody rb;
+    [Header("Player Speed Matching")]
+    public float speedOffset = 1.0f; // How much faster than the player
+    public bool alwaysMatchPlayerSpeed = false;
+
+    private NavMeshAgent agent;
     private Animator animator;
-
-    private Transform currentPatrolTarget;
-    private bool isChasing;
-    private float patrolWaitTimer;
-
+    private int patrolIndex = 0;
     private int currentAnimHash = -1;
 
-    private readonly int walkHash = Animator.StringToHash("Old Man Walk");
+    private readonly int walkHash = Animator.StringToHash("Walk");
     private readonly int runHash = Animator.StringToHash("Running");
     private readonly int attackHash = Animator.StringToHash("Attack");
 
-
-
-
     void Start()
     {
-
-
-
-        rb = GetComponent<Rigidbody>();
+        agent = GetComponent<NavMeshAgent>();
         animator = GetComponent<Animator>();
 
-        currentPatrolTarget = pointB;
-        isChasing = false;
-        patrolWaitTimer = 0f;
+        agent.updateRotation = false; 
+        agent.speed = patrolSpeed;
+
+        if (patrolPoints.Length > 0)
+        {
+            patrolIndex = 0;
+            agent.SetDestination(patrolPoints[patrolIndex].position);
+        }
 
         PlayAnimation(walkHash);
     }
 
     void Update()
     {
-        var playerAnim = target.GetComponent<AutoRunnerAnimation>();
-        if (playerAnim != null && playerAnim.IsDead) return;
+        if (player == null) return;
 
-        float distanceToPlayer = Vector3.Distance(target.position, transform.position);
+        float distanceToPlayer = Vector3.Distance(transform.position, player.position);
+
+        // Get player speed
+        float playerSpeed = player.GetComponent<AutoRunner>().GetCurrentSpeed();
+
+        // Always match player speed + offset
+        if (alwaysMatchPlayerSpeed)
+        {
+            agent.speed = playerSpeed + speedOffset;
+        }
 
         if (distanceToPlayer <= detectionRange)
         {
-            if (!isChasing)
+            // Chase player
+            if (distanceToPlayer <= attackRange)
             {
-                isChasing = true;
-                patrolWaitTimer = 0f;
+                agent.isStopped = true;
+                PlayAnimation(attackHash);
             }
-            ChasePlayer();
-            PlayAnimation(runHash);
+            else
+            {
+                agent.isStopped = false;
+                agent.SetDestination(player.position);
+                PlayAnimation(runHash);
+            }
         }
         else
         {
-            if (isChasing)
+            // Patrol behavior
+            agent.speed = patrolSpeed;
+            if (!agent.pathPending && agent.remainingDistance < 0.2f && patrolPoints.Length > 0)
             {
-                isChasing = false;
+                patrolIndex = (patrolIndex + 1) % patrolPoints.Length;
+                agent.SetDestination(patrolPoints[patrolIndex].position);
             }
-            Patrol();
             PlayAnimation(walkHash);
         }
+
+        RotateSmooth();
     }
 
-    void Patrol()
+    private void RotateSmooth()
     {
-        if (patrolWaitTimer > 0f)
+        Vector3 velocity = agent.velocity;
+        velocity.y = 0f;
+        if (velocity.magnitude > 0.1f)
         {
-            patrolWaitTimer -= Time.fixedDeltaTime;
-            return;
-        }
-
-        Vector3 targetPos = new Vector3(currentPatrolTarget.position.x, transform.position.y, currentPatrolTarget.position.z);
-        Vector3 direction = (targetPos - transform.position).normalized;
-
-        if (direction != Vector3.zero)
-        {
-            Quaternion lookRotation = Quaternion.LookRotation(direction);
-            transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.fixedDeltaTime * 5f);
-        }
-
-        Vector3 newPos = Vector3.MoveTowards(transform.position, targetPos, patrolSpeed * Time.fixedDeltaTime);
-        rb.MovePosition(newPos);
-
-        if (Vector3.Distance(transform.position, targetPos) < 0.1f)
-        {
-            currentPatrolTarget = (currentPatrolTarget == pointA) ? pointB : pointA;
-            patrolWaitTimer = patrolWaitTime;
+            Quaternion targetRot = Quaternion.LookRotation(velocity);
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, rotationSpeed * Time.deltaTime);
         }
     }
-
-    void ChasePlayer()
-    {
-        Vector3 targetPos = new Vector3(target.position.x, transform.position.y, target.position.z);
-        Vector3 direction = (targetPos - transform.position).normalized;
-
-        if (direction != Vector3.zero)
-        {
-            Quaternion lookRotation = Quaternion.LookRotation(direction);
-            transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.fixedDeltaTime * 8f);
-        }
-
-        Vector3 newPos = Vector3.MoveTowards(transform.position, targetPos, chaseSpeed * Time.fixedDeltaTime);
-        rb.MovePosition(newPos);
-    }
-
 
     private void OnTriggerEnter(Collider other)
     {
-        LevelManager level = FindFirstObjectByType<LevelManager>();
-
-
         if (!other.CompareTag("Player")) return;
 
         var playerAnim = other.GetComponent<AutoRunnerAnimation>();
         if (playerAnim != null && !playerAnim.IsDead)
         {
             PlayAnimation(attackHash);
-            playerAnim.TakeDamage(playerAnim.maxHealth); // Ensure player dies
-            if (level != null)
-                level.PlayerDied();
+            playerAnim.TakeDamage(playerAnim.maxHealth);
+
+            var level = FindFirstObjectByType<LevelManager>();
+            if (level != null) level.PlayerDied();
         }
     }
 
     private void PlayAnimation(int hash)
     {
-        if (animator == null) return;
-        if (currentAnimHash == hash) return;
-
+        if (animator == null || currentAnimHash == hash) return;
         if (animator.HasState(0, hash))
         {
             animator.CrossFade(hash, 0.1f);
