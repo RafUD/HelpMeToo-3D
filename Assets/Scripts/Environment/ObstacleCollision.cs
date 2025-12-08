@@ -12,7 +12,7 @@ public class ObstacleCollision : MonoBehaviour
     public float pushOutBuffer = 2f; // extra distance to place player outside collider
     public bool addKinematicRigidbody = true;
 
-    AudioManager audioManager;
+    AudioManager_3D audioManager;
     LevelManager levelManager;
     Collider ownCollider;
     Rigidbody rb;
@@ -22,7 +22,7 @@ public class ObstacleCollision : MonoBehaviour
 
     void Awake()
     {
-        audioManager = FindFirstObjectByType<AudioManager>();
+        audioManager = FindFirstObjectByType<AudioManager_3D>();
         levelManager = FindFirstObjectByType<LevelManager>();
         ownCollider = GetComponent<Collider>();
         rb = GetComponent<Rigidbody>();

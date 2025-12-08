@@ -51,14 +51,14 @@ public class AutoRunnerAnimation : MonoBehaviour
     // Track last movement stage
     private ItemsManager.SpeedStage lastStage = ItemsManager.SpeedStage.Walking;
 
-    AudioManager audioManager;
+    AudioManager_3D audioManager;
 
     private void Awake()
     {
-        // Locate the object tagged "Audio" and get AudioManager
+        // Locate the object tagged "Audio" and get AudioManager_2D
         GameObject audioObj = GameObject.FindGameObjectWithTag("Audio");
         if (audioObj != null)
-            audioManager = audioObj.GetComponent<AudioManager>();
+            audioManager = audioObj.GetComponent<AudioManager_3D>();
     }
 
     void Start()

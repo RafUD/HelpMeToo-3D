@@ -6,7 +6,7 @@ public class LevelManager : MonoBehaviour
 {
     public AutoRunnerAnimation animController; 
     public AutoRunner playerMover;             
-    public AudioManager audioManager;          
+    public AudioManager_3D audioManager;          
 
     public float victoryDelay = 10f; // Delay before loading next level after victory
     public float deathDelay = 8f;    // Delay before restarting level after death
@@ -26,7 +26,7 @@ public class LevelManager : MonoBehaviour
             playerMover = FindFirstObjectByType<AutoRunner>();
 
         if (audioManager == null)
-            audioManager = FindFirstObjectByType<AudioManager>();
+            audioManager = FindFirstObjectByType<AudioManager_3D>();
     }
 
     // PLAYER WINS

@@ -4,7 +4,7 @@ using UnityEngine.SceneManagement;
 
 
 
-public class MainMenu : MonoBehaviour
+public class MainMenu3D : MonoBehaviour
 {
     [SerializeField] GameObject fadeOut;
 
@@ -29,7 +29,7 @@ public class MainMenu : MonoBehaviour
     {
         fadeOut.SetActive(true);
         yield return new WaitForSeconds(1);
-        SceneManager.LoadScene("Niveau");
+        SceneManager.LoadScene("Niveau 3D");
 
     }
 }

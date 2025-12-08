@@ -6,11 +6,26 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/MainMenu.unity
+    path: Assets/Scenes/Game Choice.unity
+    guid: 92fd5800a3671db4989ffef7e58f3eed
+  - enabled: 1
+    path: Assets/Scenes/Main Menu 2D.unity
+    guid: c25a33e9afa4e6645b98f2eb3377768c
+  - enabled: 1
+    path: Assets/Scenes/NiveauRaf.unity
+    guid: 8c9cfa26abfee488c85f1582747f6a02
+  - enabled: 1
+    path: Assets/Scenes/NiveauAhmed.unity
+    guid: 214e6a3670ec7b443be17b3145de6a35
+  - enabled: 1
+    path: Assets/Scenes/Main Menu 3D.unity
     guid: 902b01fcbba6cee4c893283e9fafe3ae
   - enabled: 1
-    path: Assets/Scenes/Niveau.unity
+    path: Assets/Scenes/Niveau 3D.unity
     guid: 724b69764db87d04d8f23eae509daf5e
+  - enabled: 1
+    path: Assets/Scenes/JeuGagne.unity
+    guid: 553fb1c263f1b7d499ab2f529d4594df
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 289c1b55c9541489481df5cc06664110, type: 3}
   m_UseUCBPForAssetBundles: 0

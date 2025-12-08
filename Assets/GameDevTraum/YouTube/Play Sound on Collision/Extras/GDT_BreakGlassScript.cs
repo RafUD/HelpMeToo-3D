@@ -12,11 +12,11 @@
 //            public class GDT_BreakGlassScript : MonoBehaviour
 //            {
 
-//                AudioManager audioManager;
+//                AudioManager_2D audioManager;
 
 //                private void Awake()
 //                {
-//                    audioManager = GameObject.FindGameObjectWithTag("Audio").GetComponent<AudioManager>();
+//                    audioManager = GameObject.FindGameObjectWithTag("Audio").GetComponent<AudioManager_2D>();
 
 //                }
 
@@ -63,14 +63,14 @@ namespace GameDevTraum
                 public float explosionRadius = 2f;
                 public float glassLifetime = 5f;
 
-                private AudioManager audioManager;
+                private AudioManager_3D audioManager;
                 private bool isBroken = false;
 
                 private void Awake()
                 {
                     GameObject audioObj = GameObject.FindGameObjectWithTag("Audio");
                     if (audioObj != null)
-                        audioManager = audioObj.GetComponent<AudioManager>();
+                        audioManager = audioObj.GetComponent<AudioManager_3D>();
                 }
 
                 private void Start()

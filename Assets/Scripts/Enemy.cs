@@ -1,128 +1,119 @@
-﻿using UnityEngine;
-using UnityEngine.AI;
+using UnityEngine;
 
-[RequireComponent(typeof(NavMeshAgent))]
-[RequireComponent(typeof(Animator))]
-public class EnemyNavMeshAI : MonoBehaviour
+public class Enemy : MonoBehaviour
 {
-    [Header("References")]
-    public Transform[] patrolPoints;
-    public Transform player;
+    [Header("Enemy Stats")]
+    [SerializeField] private float health = 50f;
+    [SerializeField] private float speed = 2f;
 
-    [Header("Settings")]
-    public float detectionRange = 10f;
-    public float patrolSpeed = 3f;
-    public float rotationSpeed = 5f;
-    public float attackRange = 1.5f;
-
-    [Header("Player Speed Matching")]
-    public float speedOffset = 1.0f; // How much faster than the player
-    public bool alwaysMatchPlayerSpeed = false;
-
-    private NavMeshAgent agent;
+    private Rigidbody2D rb;
     private Animator animator;
-    private int patrolIndex = 0;
-    private int currentAnimHash = -1;
+    private bool isDead = false;
 
-    private readonly int walkHash = Animator.StringToHash("Walk");
-    private readonly int runHash = Animator.StringToHash("Running");
-    private readonly int attackHash = Animator.StringToHash("Attack");
+    [Header("Patrol Points")]
+    public GameObject pointA;
+    public GameObject pointB;
+    private Transform currentPoint;
 
-    void Start()
+    [Header("Damage to Player")]
+    public int damage = 1;
+
+    private AudioManager_2D audioManager;
+
+    private void Start()
     {
-        agent = GetComponent<NavMeshAgent>();
+        rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
+        currentPoint = pointB.transform; // start moving toward B
 
-        agent.updateRotation = false; 
-        agent.speed = patrolSpeed;
-
-        if (patrolPoints.Length > 0)
-        {
-            patrolIndex = 0;
-            agent.SetDestination(patrolPoints[patrolIndex].position);
-        }
-
-        PlayAnimation(walkHash);
+        audioManager = GameObject.FindGameObjectWithTag("Audio").GetComponent<AudioManager_2D>();
     }
 
-    void Update()
+    private void Update()
     {
-        if (player == null) return;
+        if (isDead) return;
 
-        float distanceToPlayer = Vector3.Distance(transform.position, player.position);
-
-        // Get player speed
-        float playerSpeed = player.GetComponent<AutoRunner>().GetCurrentSpeed();
-
-        // Always match player speed + offset
-        if (alwaysMatchPlayerSpeed)
-        {
-            agent.speed = playerSpeed + speedOffset;
-        }
-
-        if (distanceToPlayer <= detectionRange)
-        {
-            // Chase player
-            if (distanceToPlayer <= attackRange)
-            {
-                agent.isStopped = true;
-                PlayAnimation(attackHash);
-            }
-            else
-            {
-                agent.isStopped = false;
-                agent.SetDestination(player.position);
-                PlayAnimation(runHash);
-            }
-        }
+        // Move toward the active point
+        if (currentPoint == pointB.transform)
+            rb.linearVelocity = new Vector2(speed, rb.linearVelocity.y);
         else
-        {
-            // Patrol behavior
-            agent.speed = patrolSpeed;
-            if (!agent.pathPending && agent.remainingDistance < 0.2f && patrolPoints.Length > 0)
-            {
-                patrolIndex = (patrolIndex + 1) % patrolPoints.Length;
-                agent.SetDestination(patrolPoints[patrolIndex].position);
-            }
-            PlayAnimation(walkHash);
-        }
+            rb.linearVelocity = new Vector2(-speed, rb.linearVelocity.y);
 
-        RotateSmooth();
-    }
-
-    private void RotateSmooth()
-    {
-        Vector3 velocity = agent.velocity;
-        velocity.y = 0f;
-        if (velocity.magnitude > 0.1f)
+        // Check if near target, switch direction
+        if (Vector2.Distance(transform.position, currentPoint.position) < 0.5f)
         {
-            Quaternion targetRot = Quaternion.LookRotation(velocity);
-            transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, rotationSpeed * Time.deltaTime);
+            Flip();
+            currentPoint = (currentPoint == pointB.transform) ? pointA.transform : pointB.transform;
         }
     }
 
-    private void OnTriggerEnter(Collider other)
+    private void Flip()
     {
-        if (!other.CompareTag("Player")) return;
+        Vector3 scale = transform.localScale;
+        scale.x *= -1;
+        transform.localScale = scale;
+    }
 
-        var playerAnim = other.GetComponent<AutoRunnerAnimation>();
-        if (playerAnim != null && !playerAnim.IsDead)
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        // If touching player, flip direction
+        if (collision.collider.CompareTag("Player"))
         {
-            PlayAnimation(attackHash);
-            playerAnim.TakeDamage(playerAnim.maxHealth);
-
-            var level = FindFirstObjectByType<LevelManager>();
-            if (level != null) level.PlayerDied();
+            Flip();
+            currentPoint = (currentPoint == pointB.transform) ? pointA.transform : pointB.transform;
         }
     }
 
-    private void PlayAnimation(int hash)
+    private void OnDrawGizmos()
     {
-        if (animator == null || currentAnimHash == hash) return;
-        if (animator.HasState(0, hash))
+        if (pointA != null && pointB != null)
         {
-            animator.CrossFade(hash, 0.1f);
-            currentAnimHash = hash;
+            Gizmos.color = Color.red;
+            Gizmos.DrawSphere(pointA.transform.position, 0.3f);
+            Gizmos.DrawSphere(pointB.transform.position, 0.3f);
+            Gizmos.DrawLine(pointA.transform.position, pointB.transform.position);
         }
+    }
+
+    private void FixedUpdate()
+    {
+        if (isDead)
+            rb.linearVelocity = Vector2.zero;
+    }
+
+    public void TakeDamage(float damage)
+    {
+        if (isDead) return;
+
+        health -= damage;
+
+        if (animator != null)
+            animator.SetTrigger("Hit");
+
+        // --- Play impact sound ---
+        if (audioManager != null && audioManager.enemyImpactSFX != null)
+            audioManager.PlaySFX(audioManager.enemyImpactSFX, 0.4f);
+
+        if (health <= 0)
+            Die();
+    }
+
+    private void Die()
+    {
+        isDead = true;
+        rb.linearVelocity = Vector2.zero;
+        rb.gravityScale = 0;
+
+        if (animator != null)
+            animator.SetTrigger("Die");
+
+        // --- Play death sound ---
+        if (audioManager != null && audioManager.deathEnemySFX != null)
+            audioManager.PlaySFX(audioManager.deathEnemySFX, 0.6f);
+
+        Collider2D col = GetComponent<Collider2D>();
+        if (col != null) col.isTrigger = true;
+
+        Destroy(gameObject, 1.2f); // Let death animation play
     }
 }

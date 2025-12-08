@@ -5,6 +5,14 @@ TagManager:
   serializedVersion: 3
   tags:
   - Audio
+  - Coin
+  - Heart
+  - Enemy
+  - FallCollider
+  - GoalCollider
+  - Ground
+  - MovingPlatform
+  - Potion
   layers:
   - Default
   - TransparentFX
@@ -12,11 +20,11 @@ TagManager:
   - 
   - Water
   - UI
-  - 
-  - 
-  - 
-  - 
-  - 
+  - Ground
+  - Player
+  - Projectile
+  - Items
+  - Enemy
   - 
   - 
   - 
@@ -41,6 +49,45 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: Background5
+    uniqueID: 2312534989
+    locked: 0
+  - name: Background4
+    uniqueID: 15613837
+    locked: 0
+  - name: Background3
+    uniqueID: 1879612763
+    locked: 0
+  - name: Background2
+    uniqueID: 1761916609
+    locked: 0
+  - name: Background1
+    uniqueID: 4001809201
+    locked: 0
+  - name: Ground
+    uniqueID: 2134256295
+    locked: 0
+  - name: Decoration
+    uniqueID: 2289179227
+    locked: 0
+  - name: Items
+    uniqueID: 3938832549
+    locked: 0
+  - name: Enemies
+    uniqueID: 2376212103
+    locked: 0
+  - name: Player
+    uniqueID: 759719349
+    locked: 0
+  - name: Objects
+    uniqueID: 851276713
+    locked: 0
+  - name: UI
+    uniqueID: 1361147537
+    locked: 0
+  - name: Projectlie
+    uniqueID: 1409839535
     locked: 0
   m_RenderingLayers:
   - Default
