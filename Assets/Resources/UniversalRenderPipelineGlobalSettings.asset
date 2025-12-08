@@ -64,6 +64,7 @@ MonoBehaviour:
       - rid: 2371799459940794374
     m_RuntimeSettings:
       m_List:
+<<<<<<< HEAD:Assets/UniversalRenderPipelineGlobalSettings.asset
       - rid: 7752762179098771456
       - rid: 7752762179098771459
       - rid: 7752762179098771461
@@ -76,6 +77,20 @@ MonoBehaviour:
       - rid: 7752762179098771476
       - rid: 2371799459940794373
       - rid: 2371799459940794374
+=======
+      - rid: 8242918200152162542
+      - rid: 8242918200152162548
+      - rid: 8242918200152162549
+      - rid: 8242918200152162551
+      - rid: 8242918200152162552
+      - rid: 8242918200152162553
+      - rid: 8242918200152162554
+      - rid: 8242918200152162559
+      - rid: 8242918200152162560
+      - rid: 8242918200152162564
+      - rid: 8242918200152162565
+      - rid: 8242918200152162566
+>>>>>>> origin/Merge-AhmedRaf_v2-(Not-sure):Assets/Resources/UniversalRenderPipelineGlobalSettings.asset
   m_AssetVersion: 8
   m_ObsoleteDefaultVolumeProfile: {fileID: 0}
   m_RenderingLayerNames:
