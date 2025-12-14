@@ -24,6 +24,12 @@ public class MainMenu3D : MonoBehaviour
         StartCoroutine(StartButton());
     }
 
+
+    public void ChangeGame()
+    {
+        SceneManager.LoadScene("Game Choice");
+    }
+
     public void Exit(){
         Application.Quit();
     }

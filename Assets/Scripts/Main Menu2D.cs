@@ -35,6 +35,13 @@ public class MainMenu : MonoBehaviour
         Application.Quit();
         Debug.Log("Quit game");
     }
+    public void ChangeGame()
+    {
+        if (audioManager != null)
+            audioManager.PlaySFX(audioManager.confirmUISFX);
+
+        SceneManager.LoadScene("Game Choice");
+    }
 
     // Optional: for UI hover sound
     public void HoverSound()

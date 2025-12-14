@@ -60,6 +60,6 @@ public class PauseMenu : MonoBehaviour
         if (audioManager != null && audioManager.cancelUISFX != null)
             audioManager.PlaySFX(audioManager.cancelUISFX);
 
-        SceneManager.LoadScene("Main Menu");
+        SceneManager.LoadScene("Main Menu 2D");
     }
 }

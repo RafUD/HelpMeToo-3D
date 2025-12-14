@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using Unity.VisualScripting.Antlr3.Runtime;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -14,7 +15,36 @@ public class LevelManager : MonoBehaviour
     bool levelEnded = false; // prevent multiple triggers
 
     public GameObject loseScreen;    
-    public GameObject victoryScreen; 
+    public GameObject victoryScreen;
+
+    public GameObject pauseMenu;
+    public static bool Paused = false;
+
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            if (Paused)
+                Play();
+            else
+                Stop();
+        }
+    }
+
+    public void Stop()
+    {
+        pauseMenu.SetActive(true);
+        Time.timeScale = 0f;
+        Paused = true;
+    }
+
+    public void Play()
+    {
+        pauseMenu.SetActive(false);
+        Time.timeScale = 1f;
+        Paused = false;
+    }
 
     void Awake()
     {
@@ -77,9 +107,10 @@ public class LevelManager : MonoBehaviour
         RestartLevel();
     }
 
-    void LoadMenu()
+
+    public void LoadMenu()
     {
-        SceneManager.LoadScene(0); // Load menu
+        SceneManager.LoadScene("Main Menu 3D"); // Load menu
     }
 
     void RestartLevel()
