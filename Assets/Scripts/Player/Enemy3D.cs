@@ -15,25 +15,36 @@ public class EnemyNavMeshAI : MonoBehaviour
     public float rotationSpeed = 5f;
     public float attackRange = 1.5f;
 
+    [Header("Combat")]
+    public int coinsRequiredToDefeat = 10;
+
     [Header("Player Speed Matching")]
-    public float speedOffset = 1.0f; // How much faster than the player
+    public float speedOffset = 1.0f;
     public bool alwaysMatchPlayerSpeed = false;
 
     private NavMeshAgent agent;
     private Animator animator;
     private int patrolIndex = 0;
     private int currentAnimHash = -1;
+    private bool isDead = false;
 
+    // Animation hashes
     private readonly int walkHash = Animator.StringToHash("Walk");
     private readonly int runHash = Animator.StringToHash("Running");
     private readonly int attackHash = Animator.StringToHash("Attack");
+    private readonly int deathHash = Animator.StringToHash("Zombie Death");
+
+
+
+    bool godModeTargeting = false;
+
 
     void Start()
     {
         agent = GetComponent<NavMeshAgent>();
         animator = GetComponent<Animator>();
 
-        agent.updateRotation = false; 
+        agent.updateRotation = false;
         agent.speed = patrolSpeed;
 
         if (patrolPoints.Length > 0)
@@ -47,82 +58,117 @@ public class EnemyNavMeshAI : MonoBehaviour
 
     void Update()
     {
-        if (player == null) return;
+        if (player == null || isDead) return;
 
         float distanceToPlayer = Vector3.Distance(transform.position, player.position);
 
-        // Get player speed
-        float playerSpeed = player.GetComponent<AutoRunner>().GetCurrentSpeed();
-
-        // Always match player speed + offset
+        // Match player speed if enabled
         if (alwaysMatchPlayerSpeed)
         {
-            agent.speed = playerSpeed + speedOffset;
+            var runner = player.GetComponent<AutoRunner>();
+            if (runner != null)
+                agent.speed = runner.GetCurrentSpeed() + speedOffset;
         }
 
         if (distanceToPlayer <= detectionRange)
         {
-            // Chase player
-            if (distanceToPlayer <= attackRange)
-            {
-                agent.isStopped = true;
-                PlayAnimation(attackHash);
-            }
-            else
-            {
-                agent.isStopped = false;
-                agent.SetDestination(player.position);
-                PlayAnimation(runHash);
-            }
+            agent.isStopped = false;
+            agent.SetDestination(player.position);
+            PlayAnimation(runHash);
         }
         else
         {
-            // Patrol behavior
-            agent.speed = patrolSpeed;
-            if (!agent.pathPending && agent.remainingDistance < 0.2f && patrolPoints.Length > 0)
-            {
-                patrolIndex = (patrolIndex + 1) % patrolPoints.Length;
-                agent.SetDestination(patrolPoints[patrolIndex].position);
-            }
+            Patrol();
             PlayAnimation(walkHash);
         }
 
         RotateSmooth();
+
+
+
+    }
+
+    private void Patrol()
+    {
+        agent.speed = patrolSpeed;
+
+        if (!agent.pathPending && agent.remainingDistance < 0.2f && patrolPoints.Length > 0)
+        {
+            patrolIndex = (patrolIndex + 1) % patrolPoints.Length;
+            agent.SetDestination(patrolPoints[patrolIndex].position);
+        }
     }
 
     private void RotateSmooth()
     {
         Vector3 velocity = agent.velocity;
         velocity.y = 0f;
+
         if (velocity.magnitude > 0.1f)
         {
             Quaternion targetRot = Quaternion.LookRotation(velocity);
-            transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, rotationSpeed * Time.deltaTime);
+            transform.rotation = Quaternion.Slerp(
+                transform.rotation,
+                targetRot,
+                rotationSpeed * Time.deltaTime
+            );
         }
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        if (!other.CompareTag("Player")) return;
 
+
+        if (isDead || !other.CompareTag("Player")) return;
+
+        int playerCoins = ItemsManager.coinsCollected;
         var playerAnim = other.GetComponent<AutoRunnerAnimation>();
-        if (playerAnim != null && !playerAnim.IsDead)
+
+        if (playerAnim == null || playerAnim.IsDead) return;
+
+        if (playerCoins >= coinsRequiredToDefeat)
         {
+            // Player defeats enemy
+            Die();
+        }
+        else
+        {
+            // Enemy kills player
             PlayAnimation(attackHash);
             playerAnim.TakeDamage(playerAnim.maxHealth);
 
-            var level = FindFirstObjectByType<LevelManager>();
-            if (level != null) level.PlayerDied();
+            FindFirstObjectByType<LevelManager>()?.PlayerDied();
         }
+    }
+
+    private void Die()
+    {
+        isDead = true;
+
+        agent.isStopped = true;
+        agent.enabled = false;
+
+        PlayAnimation(deathHash);
+
+        Destroy(gameObject, 2.5f); // let animation finish
     }
 
     private void PlayAnimation(int hash)
     {
         if (animator == null || currentAnimHash == hash) return;
+
         if (animator.HasState(0, hash))
         {
             animator.CrossFade(hash, 0.1f);
             currentAnimHash = hash;
         }
     }
+
+
+    public void EnterGodModeTarget()
+    {
+        godModeTargeting = true;
+        agent.isStopped = false;
+    }
+
 }

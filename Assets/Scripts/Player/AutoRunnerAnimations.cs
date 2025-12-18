@@ -43,10 +43,14 @@ public class AutoRunnerAnimation : MonoBehaviour
     readonly int walkingHash = Animator.StringToHash("Walking");
     readonly int joggingHash = Animator.StringToHash("Jog Forward");
     readonly int runningHash = Animator.StringToHash("Running");
+    readonly int runningCrawlHash = Animator.StringToHash("Running Crawl");
     readonly int jumpHash = Animator.StringToHash("Jump");
     readonly int crouchHash = Animator.StringToHash("Crouching Idle");
     readonly int deathHash = Animator.StringToHash("Death");
     readonly int victoryHash = Animator.StringToHash("Victory");
+
+    readonly int godModeHash = Animator.StringToHash("GodModeDance");
+
 
     // Track last movement stage
     private ItemsManager.SpeedStage lastStage = ItemsManager.SpeedStage.Walking;
@@ -119,13 +123,26 @@ public class AutoRunnerAnimation : MonoBehaviour
             audioManager?.PlaySFX(audioManager.playerMove);
 
             lastStage = currentStage;
-            
+
             switch (currentStage)
             {
-                case ItemsManager.SpeedStage.Walking: PlayState(walkingHash); break;
-                case ItemsManager.SpeedStage.Jogging: PlayState(joggingHash); break;
-                case ItemsManager.SpeedStage.Running: PlayState(runningHash); break;
+                case ItemsManager.SpeedStage.Walking:
+                    PlayState(walkingHash);
+                    break;
+
+                case ItemsManager.SpeedStage.Jogging:
+                    PlayState(joggingHash);
+                    break;
+
+                case ItemsManager.SpeedStage.Running:
+                    PlayState(runningHash);
+                    break;
+
+                case ItemsManager.SpeedStage.RunningCrawl:
+                    PlayState(runningCrawlHash);
+                    break;
             }
+
 
             hasStartedRunning = true;
         }
@@ -252,4 +269,13 @@ public class AutoRunnerAnimation : MonoBehaviour
         lastStage = ItemsManager.SpeedStage.Walking;
         UpdateMovementAnimation();
     }
+
+
+    public void PlayGodMode()
+    {
+        if (isDead || isVictorious) return;
+        animator.CrossFadeInFixedTime(godModeHash, 0.2f);
+    }
+
+
 }

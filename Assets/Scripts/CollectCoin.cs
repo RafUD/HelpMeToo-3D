@@ -2,11 +2,10 @@ using UnityEngine;
 
 public class CollectCoin : MonoBehaviour
 {
-    AudioManager_3D audioManager;  
+    AudioManager_3D audioManager;
 
     private void Awake()
     {
-        // Locate the object tagged "Audio" and get AudioManager_2D
         GameObject audioObj = GameObject.FindGameObjectWithTag("Audio");
         if (audioObj != null)
             audioManager = audioObj.GetComponent<AudioManager_3D>();
@@ -17,24 +16,30 @@ public class CollectCoin : MonoBehaviour
         // Only the player can collect coins
         if (other.CompareTag("Player"))
         {
-            if (audioManager != null)
-                audioManager.PlaySFX(audioManager.coin);
-
-            // Save old speed stage
-            ItemsManager.SpeedStage previousStage = ItemsManager.CurrentStage;
-
-            // Increase coin count
-            ItemsManager.coinsCollected += 1;
-
-            // Check if a new speed stage was reached
-            ItemsManager.SpeedStage newStage = ItemsManager.CurrentStage;
-            if (newStage != previousStage && audioManager != null)
-            {
-                audioManager.PlaySFX(audioManager.powerUp); // Play speed-upgrade sound
-            }
-
-            // Remove the coin from the scene
-            Destroy(gameObject);
+            CollectThisCoin();
         }
+    }
+
+    // Public method so CoinMove can also call it
+    public void CollectThisCoin()
+    {
+        if (audioManager != null)
+            audioManager.PlaySFX(audioManager.coin);
+
+        // Save old speed stage
+        ItemsManager.SpeedStage previousStage = ItemsManager.CurrentStage;
+
+        // Increase coin count
+        ItemsManager.coinsCollected += 1;
+
+        // Check if a new speed stage was reached
+        ItemsManager.SpeedStage newStage = ItemsManager.CurrentStage;
+        if (newStage != previousStage && audioManager != null)
+        {
+            audioManager.PlaySFX(audioManager.powerUp);
+        }
+
+        // Remove the coin from the scene
+        Destroy(gameObject);
     }
 }

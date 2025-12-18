@@ -9,6 +9,8 @@ public class AutoRunner : MonoBehaviour
     public float walkSpeed = 5f;
     public float jogSpeed = 10f;
     public float runSpeed = 15f;
+    public float runningCrawlSpeed = 20f;
+
     public float strafeSpeed = 7f;
     public float turnSpeed = 10f;
     public float tiltAngle = 5f;
@@ -135,10 +137,21 @@ public class AutoRunner : MonoBehaviour
     {
         switch (ItemsManager.CurrentStage)
         {
-            case ItemsManager.SpeedStage.Walking: return walkSpeed;
-            case ItemsManager.SpeedStage.Jogging: return jogSpeed;
-            case ItemsManager.SpeedStage.Running: return runSpeed;
-            default: return walkSpeed;
+            case ItemsManager.SpeedStage.Walking:
+                return walkSpeed;
+
+            case ItemsManager.SpeedStage.Jogging:
+                return jogSpeed;
+
+            case ItemsManager.SpeedStage.Running:
+                return runSpeed;
+
+            case ItemsManager.SpeedStage.RunningCrawl:
+                return runningCrawlSpeed;
+
+            default:
+                return walkSpeed;
         }
     }
+
 }

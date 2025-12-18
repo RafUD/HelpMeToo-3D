@@ -779,13 +779,67 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 8982995889440886122, guid: 06814ebc7a35bfc41bd3f0d194dc203d, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1433594935}
+    - targetCorrespondingSourceObject: {fileID: 8982995889440886122, guid: 06814ebc7a35bfc41bd3f0d194dc203d, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1433594934}
   m_SourcePrefab: {fileID: 100100000, guid: 06814ebc7a35bfc41bd3f0d194dc203d, type: 3}
 --- !u!4 &85936953 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 281427919503891342, guid: 06814ebc7a35bfc41bd3f0d194dc203d, type: 3}
   m_PrefabInstance: {fileID: 85936952}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &92692531 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8982995889440886122, guid: 06814ebc7a35bfc41bd3f0d194dc203d, type: 3}
+  m_PrefabInstance: {fileID: 810140532799070624}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &92692533
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 92692531}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 55873b14878d0c647aa5b12c26bef887, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyNavMeshAI
+  patrolPoints: []
+  player: {fileID: 478861774}
+  detectionRange: 10
+  patrolSpeed: 3
+  rotationSpeed: 5
+  attackRange: 1.5
+  coinsRequiredToDefeat: 10
+  speedOffset: 1
+  alwaysMatchPlayerSpeed: 0
+--- !u!195 &92692534
+NavMeshAgent:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 92692531}
+  m_Enabled: 1
+  m_AgentTypeID: 0
+  m_Radius: 0.5
+  m_Speed: 3.5
+  m_Acceleration: 8
+  avoidancePriority: 50
+  m_AngularSpeed: 120
+  m_StoppingDistance: 0
+  m_AutoTraverseOffMeshLink: 1
+  m_AutoBraking: 1
+  m_AutoRepath: 1
+  m_Height: 2
+  m_BaseOffset: 0
+  m_WalkableMask: 4294967295
+  m_ObstacleAvoidanceType: 4
 --- !u!1001 &125475145
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -881,7 +935,13 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 8982995889440886122, guid: 06814ebc7a35bfc41bd3f0d194dc203d, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1065588335}
+    - targetCorrespondingSourceObject: {fileID: 8982995889440886122, guid: 06814ebc7a35bfc41bd3f0d194dc203d, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1065588334}
   m_SourcePrefab: {fileID: 100100000, guid: 06814ebc7a35bfc41bd3f0d194dc203d, type: 3}
 --- !u!4 &125475146 stripped
 Transform:
@@ -2965,6 +3025,28 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 4789017414653576427, guid: d55f0e316e147a641b7040dc5fbed310, type: 3}
   m_PrefabInstance: {fileID: 360506620}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &478861775 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7089200452988542835, guid: d55f0e316e147a641b7040dc5fbed310, type: 3}
+  m_PrefabInstance: {fileID: 360506620}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d3bcf2f147d2d6246ae25c30dbbaa4fb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AutoRunner
+--- !u!114 &478861776 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5675902606458932261, guid: d55f0e316e147a641b7040dc5fbed310, type: 3}
+  m_PrefabInstance: {fileID: 360506620}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d9abd8d7da886a040816b08e3815c0de, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AutoRunerAnimations
 --- !u!1 &525501888
 GameObject:
   m_ObjectHideFlags: 0
@@ -4710,7 +4792,13 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 8982995889440886122, guid: 06814ebc7a35bfc41bd3f0d194dc203d, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1648642278}
+    - targetCorrespondingSourceObject: {fileID: 8982995889440886122, guid: 06814ebc7a35bfc41bd3f0d194dc203d, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1648642277}
   m_SourcePrefab: {fileID: 100100000, guid: 06814ebc7a35bfc41bd3f0d194dc203d, type: 3}
 --- !u!4 &841556882 stripped
 Transform:
@@ -4753,6 +4841,42 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: -1820, y: -980}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!1 &975050574
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 975050575}
+  m_Layer: 0
+  m_Name: GameObject (2)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &975050575
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 975050574}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 195.74872, y: 5.34389, z: -72.73157}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!82 &993045729 stripped
+AudioSource:
+  m_CorrespondingSourceObject: {fileID: 7517587303623802103, guid: d5be14dfbbb20d84791c8430318396f9, type: 3}
+  m_PrefabInstance: {fileID: 2006381231}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1004499650
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5325,7 +5449,13 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 8982995889440886122, guid: 06814ebc7a35bfc41bd3f0d194dc203d, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1461811306}
+    - targetCorrespondingSourceObject: {fileID: 8982995889440886122, guid: 06814ebc7a35bfc41bd3f0d194dc203d, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1461811305}
   m_SourcePrefab: {fileID: 100100000, guid: 06814ebc7a35bfc41bd3f0d194dc203d, type: 3}
 --- !u!4 &1023201673 stripped
 Transform:
@@ -5410,6 +5540,54 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1038409019}
   m_CullTransparentMesh: 1
+--- !u!1 &1065588332 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8982995889440886122, guid: 06814ebc7a35bfc41bd3f0d194dc203d, type: 3}
+  m_PrefabInstance: {fileID: 125475145}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1065588334
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1065588332}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 55873b14878d0c647aa5b12c26bef887, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyNavMeshAI
+  patrolPoints: []
+  player: {fileID: 1349856403}
+  detectionRange: 10
+  patrolSpeed: 3
+  rotationSpeed: 5
+  attackRange: 1.5
+  coinsRequiredToDefeat: 10
+  speedOffset: 1
+  alwaysMatchPlayerSpeed: 0
+--- !u!195 &1065588335
+NavMeshAgent:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1065588332}
+  m_Enabled: 1
+  m_AgentTypeID: 0
+  m_Radius: 0.5
+  m_Speed: 3.5
+  m_Acceleration: 8
+  avoidancePriority: 50
+  m_AngularSpeed: 120
+  m_StoppingDistance: 0
+  m_AutoTraverseOffMeshLink: 1
+  m_AutoBraking: 1
+  m_AutoRepath: 1
+  m_Height: 2
+  m_BaseOffset: 0
+  m_WalkableMask: 4294967295
+  m_ObstacleAvoidanceType: 4
 --- !u!1 &1124765456
 GameObject:
   m_ObjectHideFlags: 0
@@ -6037,7 +6215,13 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 8982995889440886122, guid: 06814ebc7a35bfc41bd3f0d194dc203d, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1447747773}
+    - targetCorrespondingSourceObject: {fileID: 8982995889440886122, guid: 06814ebc7a35bfc41bd3f0d194dc203d, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1447747772}
   m_SourcePrefab: {fileID: 100100000, guid: 06814ebc7a35bfc41bd3f0d194dc203d, type: 3}
 --- !u!4 &1253353626 stripped
 Transform:
@@ -6742,6 +6926,150 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1417984842}
   m_CullTransparentMesh: 1
+--- !u!1 &1433594932 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8982995889440886122, guid: 06814ebc7a35bfc41bd3f0d194dc203d, type: 3}
+  m_PrefabInstance: {fileID: 85936952}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1433594934
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1433594932}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 55873b14878d0c647aa5b12c26bef887, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyNavMeshAI
+  patrolPoints: []
+  player: {fileID: 545303856}
+  detectionRange: 10
+  patrolSpeed: 3
+  rotationSpeed: 5
+  attackRange: 1.5
+  coinsRequiredToDefeat: 10
+  speedOffset: 1
+  alwaysMatchPlayerSpeed: 0
+--- !u!195 &1433594935
+NavMeshAgent:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1433594932}
+  m_Enabled: 1
+  m_AgentTypeID: 0
+  m_Radius: 0.5
+  m_Speed: 3.5
+  m_Acceleration: 8
+  avoidancePriority: 50
+  m_AngularSpeed: 120
+  m_StoppingDistance: 0
+  m_AutoTraverseOffMeshLink: 1
+  m_AutoBraking: 1
+  m_AutoRepath: 1
+  m_Height: 2
+  m_BaseOffset: 0
+  m_WalkableMask: 4294967295
+  m_ObstacleAvoidanceType: 4
+--- !u!1 &1447747770 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8982995889440886122, guid: 06814ebc7a35bfc41bd3f0d194dc203d, type: 3}
+  m_PrefabInstance: {fileID: 1253353625}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1447747772
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1447747770}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 55873b14878d0c647aa5b12c26bef887, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyNavMeshAI
+  patrolPoints: []
+  player: {fileID: 1688493039}
+  detectionRange: 10
+  patrolSpeed: 3
+  rotationSpeed: 5
+  attackRange: 1.5
+  coinsRequiredToDefeat: 10
+  speedOffset: 1
+  alwaysMatchPlayerSpeed: 0
+--- !u!195 &1447747773
+NavMeshAgent:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1447747770}
+  m_Enabled: 1
+  m_AgentTypeID: 0
+  m_Radius: 0.5
+  m_Speed: 3.5
+  m_Acceleration: 8
+  avoidancePriority: 50
+  m_AngularSpeed: 120
+  m_StoppingDistance: 0
+  m_AutoTraverseOffMeshLink: 1
+  m_AutoBraking: 1
+  m_AutoRepath: 1
+  m_Height: 2
+  m_BaseOffset: 0
+  m_WalkableMask: 4294967295
+  m_ObstacleAvoidanceType: 4
+--- !u!1 &1461811303 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8982995889440886122, guid: 06814ebc7a35bfc41bd3f0d194dc203d, type: 3}
+  m_PrefabInstance: {fileID: 1023201672}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1461811305
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1461811303}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 55873b14878d0c647aa5b12c26bef887, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyNavMeshAI
+  patrolPoints: []
+  player: {fileID: 1887631567}
+  detectionRange: 10
+  patrolSpeed: 3
+  rotationSpeed: 5
+  attackRange: 1.5
+  coinsRequiredToDefeat: 10
+  speedOffset: 1
+  alwaysMatchPlayerSpeed: 0
+--- !u!195 &1461811306
+NavMeshAgent:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1461811303}
+  m_Enabled: 1
+  m_AgentTypeID: 0
+  m_Radius: 0.5
+  m_Speed: 3.5
+  m_Acceleration: 8
+  avoidancePriority: 50
+  m_AngularSpeed: 120
+  m_StoppingDistance: 0
+  m_AutoTraverseOffMeshLink: 1
+  m_AutoBraking: 1
+  m_AutoRepath: 1
+  m_Height: 2
+  m_BaseOffset: 0
+  m_WalkableMask: 4294967295
+  m_ObstacleAvoidanceType: 4
 --- !u!1001 &1510789682
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -7099,6 +7427,59 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1611640035}
   m_CullTransparentMesh: 1
+--- !u!1 &1648642275 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8982995889440886122, guid: 06814ebc7a35bfc41bd3f0d194dc203d, type: 3}
+  m_PrefabInstance: {fileID: 841556881}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1648642277
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1648642275}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 55873b14878d0c647aa5b12c26bef887, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyNavMeshAI
+  patrolPoints: []
+  player: {fileID: 222813284}
+  detectionRange: 10
+  patrolSpeed: 3
+  rotationSpeed: 5
+  attackRange: 1.5
+  coinsRequiredToDefeat: 10
+  speedOffset: 1
+  alwaysMatchPlayerSpeed: 0
+--- !u!195 &1648642278
+NavMeshAgent:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1648642275}
+  m_Enabled: 1
+  m_AgentTypeID: 0
+  m_Radius: 0.5
+  m_Speed: 3.5
+  m_Acceleration: 8
+  avoidancePriority: 50
+  m_AngularSpeed: 120
+  m_StoppingDistance: 0
+  m_AutoTraverseOffMeshLink: 1
+  m_AutoBraking: 1
+  m_AutoRepath: 1
+  m_Height: 2
+  m_BaseOffset: 0
+  m_WalkableMask: 4294967295
+  m_ObstacleAvoidanceType: 4
+--- !u!82 &1664403508 stripped
+AudioSource:
+  m_CorrespondingSourceObject: {fileID: 6802978682684347328, guid: d5be14dfbbb20d84791c8430318396f9, type: 3}
+  m_PrefabInstance: {fileID: 2006381231}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &1688493039 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4789017414653576427, guid: d55f0e316e147a641b7040dc5fbed310, type: 3}
@@ -7199,6 +7580,37 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!1 &1701390718
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1701390719}
+  m_Layer: 0
+  m_Name: GameObject (4)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1701390719
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1701390718}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 195.74872, y: 5.34389, z: -72.73157}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1717253920
 GameObject:
   m_ObjectHideFlags: 0
@@ -7788,6 +8200,37 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1905532351}
   m_CullTransparentMesh: 1
+--- !u!1 &1908446267
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1908446268}
+  m_Layer: 0
+  m_Name: GameObject (3)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1908446268
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1908446267}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 195.74872, y: 5.34389, z: -72.73157}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1927683845
 GameObject:
   m_ObjectHideFlags: 0
@@ -7818,13 +8261,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b71920da861eeaa499a1771f4bd963f0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LevelManager
-  animController: {fileID: 0}
-  playerMover: {fileID: 0}
-  audioManager: {fileID: 0}
+  animController: {fileID: 478861776}
+  playerMover: {fileID: 478861775}
+  audioManager: {fileID: 1840683337}
   victoryDelay: 2
   deathDelay: 2
-  loseScreen: {fileID: 0}
-  victoryScreen: {fileID: 0}
+  loseScreen: {fileID: 975050574}
+  victoryScreen: {fileID: 1908446267}
+  pauseMenu: {fileID: 1701390718}
+  menuSceneName: Main Menu 3D
 --- !u!114 &1927683847
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7840,6 +8285,7 @@ MonoBehaviour:
   coinCountDisplay: {fileID: 0}
   coinsForJog: 5
   coinsForRun: 10
+  coinsForRunningCrawl: 15
 --- !u!4 &1927683848
 Transform:
   m_ObjectHideFlags: 0
@@ -8389,6 +8835,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 8300000, guid: 07a41605698872c42b9a3ae6f8506685, type: 3}
     - target: {fileID: 1172376877464771107, guid: d5be14dfbbb20d84791c8430318396f9, type: 3}
+      propertyPath: sfxSource
+      value: 
+      objectReference: {fileID: 993045729}
+    - target: {fileID: 1172376877464771107, guid: d5be14dfbbb20d84791c8430318396f9, type: 3}
       propertyPath: background
       value: 
       objectReference: {fileID: 8300000, guid: 6c7402b6b3095464d9db850885c4d565, type: 3}
@@ -8396,6 +8846,10 @@ PrefabInstance:
       propertyPath: buttonClick
       value: 
       objectReference: {fileID: 8300000, guid: d37a35f5d1971ec4c80a46294b58e6f8, type: 3}
+    - target: {fileID: 1172376877464771107, guid: d5be14dfbbb20d84791c8430318396f9, type: 3}
+      propertyPath: musicSource
+      value: 
+      objectReference: {fileID: 1664403508}
     - target: {fileID: 2860544437260772988, guid: d5be14dfbbb20d84791c8430318396f9, type: 3}
       propertyPath: m_LocalPosition.x
       value: 83.955
@@ -8439,6 +8893,10 @@ PrefabInstance:
     - target: {fileID: 5317580769573854449, guid: d5be14dfbbb20d84791c8430318396f9, type: 3}
       propertyPath: m_Name
       value: Audio Manager
+      objectReference: {fileID: 0}
+    - target: {fileID: 7517587303623802103, guid: d5be14dfbbb20d84791c8430318396f9, type: 3}
+      propertyPath: m_Volume
+      value: 0.469
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -9086,7 +9544,13 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 8982995889440886122, guid: 06814ebc7a35bfc41bd3f0d194dc203d, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 92692534}
+    - targetCorrespondingSourceObject: {fileID: 8982995889440886122, guid: 06814ebc7a35bfc41bd3f0d194dc203d, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 92692533}
   m_SourcePrefab: {fileID: 100100000, guid: 06814ebc7a35bfc41bd3f0d194dc203d, type: 3}
 --- !u!4 &810140532799070625 stripped
 Transform:
@@ -9110,3 +9574,6 @@ SceneRoots:
   - {fileID: 746035985}
   - {fileID: 2006381231}
   - {fileID: 1812752885}
+  - {fileID: 975050575}
+  - {fileID: 1908446268}
+  - {fileID: 1701390719}

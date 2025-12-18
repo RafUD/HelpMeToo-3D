@@ -9,8 +9,8 @@ public class ItemsManager : MonoBehaviour
     [Header("Speed Stage Settings")]
     public int coinsForJog = 5;    
     public int coinsForRun = 10;   
-
-    public enum SpeedStage { Walking, Jogging, Running }
+    public int coinsForRunningCrawl = 15;
+    public enum SpeedStage { Walking, Jogging, Running, RunningCrawl }
     public static SpeedStage CurrentStage { get;  set; }
 
     void Awake()
@@ -20,14 +20,16 @@ public class ItemsManager : MonoBehaviour
         // Reset on scene load
         CurrentStage = SpeedStage.Walking;
     }
-
     void Update()
     {
         if (coinCountDisplay != null)
             coinCountDisplay.text = coinsCollected.ToString();
 
-        // Determine current stage based on coins collected
-        if (coinsCollected >= coinsForRun)
+        if (coinsCollected >= coinsForRunningCrawl)
+        {
+            CurrentStage = SpeedStage.RunningCrawl;
+        }
+        else if (coinsCollected >= coinsForRun)
         {
             CurrentStage = SpeedStage.Running;
         }
@@ -40,6 +42,7 @@ public class ItemsManager : MonoBehaviour
             CurrentStage = SpeedStage.Walking;
         }
     }
+
 
     public static void ResetCoins()
     {

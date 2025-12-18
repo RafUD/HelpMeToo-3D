@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 using UnityEngine.AI;
 
 [RequireComponent(typeof(NavMeshAgent))] 
@@ -26,28 +27,49 @@ public class BossNavMeshAI : MonoBehaviour
     private readonly int runHash = Animator.StringToHash("Mutant Run");
     private readonly int attackWinHash = Animator.StringToHash("Mutant Punch");
     private readonly int attackLoseHash = Animator.StringToHash("Mutant Dying");
+    private readonly int taunt = Animator.StringToHash("Standing Taunt Battlecry");
+
+    private bool isTaunting = true;
 
     void Start()
     {
-        // Get references
         agent = GetComponent<NavMeshAgent>();
         animator = GetComponent<Animator>();
 
-        agent.updateRotation = false; // We manually rotate in RotateSmooth()
+        agent.updateRotation = false;
         agent.speed = patrolSpeed;
+        agent.isStopped = true; // IMPORTANT: stop movement during taunt
 
-        // Set initial patrol destination
+        PlayAnimation(taunt);
+
+        StartCoroutine(TauntThenStart());
+    }
+
+
+    private IEnumerator TauntThenStart()
+    {
+        // Adjust this to your taunt animation length
+        yield return new WaitForSeconds(2.5f);
+
+        isTaunting = false;
+        agent.isStopped = false;
+
         if (patrolPoints.Length > 0)
         {
             patrolIndex = 0;
             agent.SetDestination(patrolPoints[patrolIndex].position);
         }
 
-        PlayAnimation(runHash); // Start running animation
+        PlayAnimation(runHash);
     }
+
 
     void Update()
     {
+
+        if (isTaunting) return;
+
+
         if (player == null) return; // Skip if player is missing
 
         int playerCoins = ItemsManager.coinsCollected;
@@ -131,4 +153,6 @@ public class BossNavMeshAI : MonoBehaviour
             currentAnimHash = hash;
         }
     }
+
+   
 }

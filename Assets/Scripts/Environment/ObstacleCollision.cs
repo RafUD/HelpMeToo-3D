@@ -153,7 +153,7 @@ public class ObstacleCollision : MonoBehaviour
 
         // Force idle pose
         if (animator != null)
-            animator.CrossFade("Idle", 0.05f);
+            animator.CrossFade("Hit", 0.05f);
 
         // Pause movement/animation scripts
         if (autoAnim != null) autoAnim.enabled = false;
@@ -181,6 +181,9 @@ public class ObstacleCollision : MonoBehaviour
         string stateName;
         switch (ItemsManager.CurrentStage)
         {
+            case ItemsManager.SpeedStage.RunningCrawl:
+                stateName = "Running Crawl";
+                break;
             case ItemsManager.SpeedStage.Running:
                 stateName = "Running";
                 break;

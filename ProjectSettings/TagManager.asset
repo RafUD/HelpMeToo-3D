@@ -13,6 +13,8 @@ TagManager:
   - Ground
   - MovingPlatform
   - Potion
+  - Coin Detector
+  - Player Bubble
   layers:
   - Default
   - TransparentFX
@@ -26,7 +28,7 @@ TagManager:
   - Items
   - Enemy
   - BrokenGlass
-  - 
+  - Coin
   - 
   - 
   - 

@@ -1,54 +1,30 @@
 ﻿using System.Collections;
-using Unity.VisualScripting.Antlr3.Runtime;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class LevelManager : MonoBehaviour
 {
-    public AutoRunnerAnimation animController; 
-    public AutoRunner playerMover;             
-    public AudioManager_3D audioManager;          
+    public AutoRunnerAnimation animController;
+    public AutoRunner playerMover;
+    public AudioManager_3D audioManager;
 
-    public float victoryDelay = 10f; // Delay before loading next level after victory
-    public float deathDelay = 8f;    // Delay before restarting level after death
+    [Header("Delays")]
+    public float victoryDelay = 10f;
+    public float deathDelay = 8f;
 
-    bool levelEnded = false; // prevent multiple triggers
-
-    public GameObject loseScreen;    
+    [Header("UI")]
+    public GameObject loseScreen;
     public GameObject victoryScreen;
-
     public GameObject pauseMenu;
+
+    [Header("Scenes")]
+    [SerializeField] private string menuSceneName = "Main Menu 3D";
+
     public static bool Paused = false;
-
-
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.Escape))
-        {
-            if (Paused)
-                Play();
-            else
-                Stop();
-        }
-    }
-
-    public void Stop()
-    {
-        pauseMenu.SetActive(true);
-        Time.timeScale = 0f;
-        Paused = true;
-    }
-
-    public void Play()
-    {
-        pauseMenu.SetActive(false);
-        Time.timeScale = 1f;
-        Paused = false;
-    }
+    private bool levelEnded = false;
 
     void Awake()
     {
-        // Auto-find references if not assigned
         if (animController == null)
             animController = FindFirstObjectByType<AutoRunnerAnimation>();
 
@@ -59,17 +35,57 @@ public class LevelManager : MonoBehaviour
             audioManager = FindFirstObjectByType<AudioManager_3D>();
     }
 
+    void Update()
+    {
+        if (levelEnded) return;
+
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            if (Paused) Play();
+            else Stop();
+        }
+    }
+
+    public void Stop()
+    {
+        pauseMenu?.SetActive(true);
+        Time.timeScale = 0f;
+        Paused = true;
+    }
+
+    public void Play()
+    {
+        pauseMenu?.SetActive(false);
+        Time.timeScale = 1f;
+        Paused = false;
+    }
+
+    // =======================
     // PLAYER WINS
+    // =======================
     public void WinLevel()
     {
-        if (levelEnded) return; // Prevent multiple calls
+        if (levelEnded) return;
         levelEnded = true;
 
-        animController?.TriggerVictory();       
-        audioManager?.PlaySFX(audioManager.victory); 
-        if (playerMover != null) playerMover.enabled = false;
+        Paused = false;
+        Time.timeScale = 1f;
+        pauseMenu?.SetActive(false);
 
-        if (victoryScreen != null) victoryScreen.SetActive(true); 
+        animController?.TriggerVictory();
+        audioManager?.PlaySFX(audioManager.victory);
+
+        if (playerMover != null)
+            playerMover.enabled = false;
+
+        victoryScreen?.SetActive(true);
+
+        if (LeaderboardManager.Instance != null)
+        {
+            LeaderboardManager.Instance.SaveScore(ItemsManager.coinsCollected);
+            Debug.Log($"Saved score: {ItemsManager.coinsCollected}");
+        }
+
 
         StartCoroutine(LoadNextAfterDelay());
     }
@@ -77,24 +93,33 @@ public class LevelManager : MonoBehaviour
     IEnumerator LoadNextAfterDelay()
     {
         yield return new WaitForSecondsRealtime(victoryDelay);
-        ItemsManager.coinsCollected = 0; // Reset coins
+        ItemsManager.coinsCollected = 0;
         LoadMenu();
     }
 
+    // =======================
     // PLAYER LOSES
+    // =======================
     public void PlayerDied()
     {
-        if (levelEnded) return; // Prevent multiple calls
+        if (levelEnded) return;
         levelEnded = true;
 
-        audioManager?.PlaySFX(audioManager.death); 
-        if (playerMover != null) playerMover.enabled = false; 
+        Paused = false;
+        Time.timeScale = 1f;
+        pauseMenu?.SetActive(false);
 
-        ItemsManager.coinsCollected = 0; // Reset coins
+        audioManager?.PlaySFX(audioManager.death);
 
-        if (loseScreen != null) loseScreen.SetActive(true); 
+        if (playerMover != null)
+            playerMover.enabled = false;
 
-        //Time.timeScale = 0f; // Pause game
+        ItemsManager.coinsCollected = 0;
+
+        foreach (var text in FindObjectsOfType<FloatingText3D>())
+            text.enabled = false;
+
+        loseScreen?.SetActive(true);
 
         StartCoroutine(RestartAfterDelay());
     }
@@ -102,19 +127,16 @@ public class LevelManager : MonoBehaviour
     IEnumerator RestartAfterDelay()
     {
         yield return new WaitForSecondsRealtime(deathDelay);
-
-        Time.timeScale = 1f; // Resume time
         RestartLevel();
     }
 
-
     public void LoadMenu()
     {
-        SceneManager.LoadScene("Main Menu 3D"); // Load menu
+        SceneManager.LoadScene(menuSceneName);
     }
 
     void RestartLevel()
     {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex); 
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 }
